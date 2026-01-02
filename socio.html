@@ -1,56 +1,15 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Validación de Socio</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      padding: 30px;
-    }
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      max-width: 400px;
-      margin: auto;
-      text-align: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .activo {
-      color: green;
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .inactivo {
-      color: red;
-      font-size: 22px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-
-<div class="card">
-  <h2>Validación de Socio</h2>
-  <p><strong>Nombre:</strong> <span id="nombre"></span></p>
-  <p><strong>Apellido:</strong> <span id="apellido"></span></p>
-  <p><strong>DNI:</strong> <span id="dni"></span></p>
-  <p id="estado"></p>
-</div>
-
 <script>
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-// PEGÁ ACÁ TU URL DE GOOGLE SHEETS
 const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/edit?gid=0#gid=0/SOCIOS";
 
 fetch(SHEET_URL)
-  .then(response => response.json())
+  .then(res => res.json())
   .then(data => {
-    const socio = data.find(s => s.ID_SOCIO === id);
+    console.log(data); // <-- ayuda a debug
+
+    const socio = data.find(s => s.ID_SOCIO?.trim() === id?.trim());
 
     if (!socio) {
       document.body.innerHTML = "<h2>Socio no encontrado</h2>";
@@ -63,15 +22,16 @@ fetch(SHEET_URL)
 
     const estado = document.getElementById("estado");
 
-    if (socio.ACTIVO === "SI") {
+    if (socio.ACTIVO.toUpperCase() === "SI") {
       estado.textContent = "SOCIO ACTIVO";
       estado.className = "activo";
     } else {
       estado.textContent = "SOCIO INACTIVO – SOLICITAR DNI";
       estado.className = "inactivo";
     }
+  })
+  .catch(err => {
+    document.body.innerHTML = "<h2>Error al cargar datos</h2>";
+    console.error(err);
   });
 </script>
-
-</body>
-</html>
