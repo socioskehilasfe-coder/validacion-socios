@@ -3,7 +3,7 @@ const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
 // LINK CSV PUBLICADO
-const CSV_URL = "PEGÁ_ACÁ_TU_LINK_CSV";
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSK4hMGHXbavcx0zBPL4dfIVv_nQq0z8eCSZ_QzefEr_yPWV3n1TcwxdjRcneVHqEliWPjkoddzNDIa/pub?gid=0&single=true&output=csv";
 
 fetch(CSV_URL)
   .then(res => res.text())
