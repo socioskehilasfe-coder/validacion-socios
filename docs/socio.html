@@ -1,0 +1,41 @@
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+// LINK CSV PUBLICADO
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSK4hMGHXbavcx0zBPL4dfIVv_nQq0z8eCSZ_QzefEr_yPWV3n1TcwxdjRcneVHqEliWPjkoddzNDIa/pub?gid=0&single=true&output=csv";
+
+fetch(CSV_URL)
+  .then(res => res.text())
+  .then(text => {
+    const rows = text.split("\n").map(r => r.split(","));
+    const headers = rows[0];
+    const data = rows.slice(1).map(r =>
+      Object.fromEntries(r.map((v, i) => [headers[i], v]))
+    );
+
+    const socio = data.find(s => s.ID_SOCIO === id);
+
+    if (!socio) {
+      document.body.innerHTML = "<h2>Socio no encontrado</h2>";
+      return;
+    }
+
+    document.getElementById("nombre").textContent = socio.NOMBRE;
+    document.getElementById("apellido").textContent = socio.APELLIDO;
+    document.getElementById("dni").textContent = socio.DNI;
+
+    const estado = document.getElementById("estado");
+
+    if (socio.ACTIVO === "SI") {
+      estado.textContent = "SOCIO ACTIVO";
+      estado.className = "activo";
+    } else {
+      estado.textContent = "SOCIO INACTIVO – SOLICITAR DNI";
+      estado.className = "inactivo";
+    }
+  })
+  .catch(() => {
+    document.body.innerHTML = "<h2>Error al cargar datos</h2>";
+  });
+</script>
