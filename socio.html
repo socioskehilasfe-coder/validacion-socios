@@ -2,14 +2,19 @@
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+// LINK CSV PUBLICADO
+const CSV_URL = "PEGÁ_ACÁ_TU_LINK_CSV";
 
-fetch(SHEET_URL)
-  .then(res => res.json())
-  .then(data => {
-    console.log(data); // <-- ayuda a debug
+fetch(CSV_URL)
+  .then(res => res.text())
+  .then(text => {
+    const rows = text.split("\n").map(r => r.split(","));
+    const headers = rows[0];
+    const data = rows.slice(1).map(r =>
+      Object.fromEntries(r.map((v, i) => [headers[i], v]))
+    );
 
-    const socio = data.find(s => s.ID_SOCIO?.trim() === id?.trim());
+    const socio = data.find(s => s.ID_SOCIO === id);
 
     if (!socio) {
       document.body.innerHTML = "<h2>Socio no encontrado</h2>";
@@ -22,7 +27,7 @@ fetch(SHEET_URL)
 
     const estado = document.getElementById("estado");
 
-    if (socio.ACTIVO.toUpperCase() === "SI") {
+    if (socio.ACTIVO === "SI") {
       estado.textContent = "SOCIO ACTIVO";
       estado.className = "activo";
     } else {
@@ -30,8 +35,7 @@ fetch(SHEET_URL)
       estado.className = "inactivo";
     }
   })
-  .catch(err => {
+  .catch(() => {
     document.body.innerHTML = "<h2>Error al cargar datos</h2>";
-    console.error(err);
   });
 </script>
