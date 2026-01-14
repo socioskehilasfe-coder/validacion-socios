@@ -99,6 +99,7 @@
   </div>
 
   <script>
+    const REGISTRO_URL = "https://script.google.com/macros/s/AKfycbx0ykVOzqSyKB6ANlksls0ACKMBbtSYsIJ56jwBolTYki7e1o9sYiJBdVi5VonOvNI1/exec";
     const params = new URLSearchParams(window.location.search);
     const socioID = params.get("id");
 
@@ -137,6 +138,20 @@
         const venceDiv = document.getElementById("vence");
 
         if (socio.Estado !== "ACTIVO" || vencido) {
+          // Registrar validación
+fetch(REGISTRO_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    hora: new Date().toLocaleTimeString("es-AR"),
+    id: socio.ID,
+    nombre: socio.Nombre,
+    apellido: socio.Apellido,
+    dni: socio.DNI,
+    estado: (socio.Estado !== "ACTIVO" || vencido) ? "INACTIVO" : "ACTIVO"
+  })
+});
+
           estadoDiv.textContent = "INACTIVO";
           estadoDiv.classList.add("inactivo");
         } else {
