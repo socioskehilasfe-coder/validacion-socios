@@ -81,6 +81,7 @@
 
   <div class="card">
 
+    <!-- LOGO -->
     <img src="/validacion-socios/logo.png" alt="Logo Comunidad Israelita de Santa Fe" class="logo">
 
     <h1>Validación de Socio</h1>
@@ -99,15 +100,24 @@
   </div>
 
   <script>
-    const REGISTRO_URL = "https://script.google.com/macros/s/AKfycbx0ykVOzqSyKB6ANlksls0ACKMBbtSYsIJ56jwBolTYki7e1o9sYiJBdVi5VonOvNI1/exec";
+    /* =========================
+       CONFIGURACIÓN (CAMBIAR)
+       ========================= */
+
+    // 🔴 1) ID DE TU GOOGLE SHEET
+    const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+
+    // 🔴 2) URL DEL APPS SCRIPT (termina en /exec)
+    const REGISTRO_URL = "https://script.google.com/macros/s/AKfycbwfH9-ElOpuy86JQ0fwtE-jeyHsjIJ4TohonpP45Bpo-ZncK41hCsYaSBrcqN9_zIyG/exec";
+
+    /* ========================= */
+
     const params = new URLSearchParams(window.location.search);
     const socioID = params.get("id");
 
     if (!socioID) {
       document.querySelector(".card").innerHTML = "<h2>Socio no especificado</h2>";
     }
-
-    const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
 
     function parseFecha(fechaStr) {
       const [dia, mes, anio] = fechaStr.split("/");
@@ -134,37 +144,43 @@
         const fechaVence = parseFecha(socio.VENCE);
         const vencido = fechaVence < hoy;
 
-        const estadoDiv = document.getElementById("estado");
-        const venceDiv = document.getElementById("vence");
-
+        let estadoFinal = "ACTIVO";
         if (socio.Estado !== "ACTIVO" || vencido) {
-          // Registrar validación
-fetch(REGISTRO_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    hora: new Date().toLocaleTimeString("es-AR"),
-    id: socio.ID,
-    nombre: socio.Nombre,
-    apellido: socio.Apellido,
-    dni: socio.DNI,
-    estado: (socio.Estado !== "ACTIVO" || vencido) ? "INACTIVO" : "ACTIVO"
-  })
-});
-
-          estadoDiv.textContent = "INACTIVO";
-          estadoDiv.classList.add("inactivo");
-        } else {
-          estadoDiv.textContent = "ACTIVO";
-          estadoDiv.classList.add("activo");
+          estadoFinal = "INACTIVO";
         }
 
-        venceDiv.textContent = "Vence: " + socio.VENCE;
+        const estadoDiv = document.getElementById("estado");
+        estadoDiv.textContent = estadoFinal;
+        estadoDiv.classList.add(
+          estadoFinal === "ACTIVO" ? "activo" : "inactivo"
+        );
+
+        document.getElementById("vence").textContent = "Vence: " + socio.VENCE;
+
+        /* ===== REGISTRO AUTOMÁTICO ===== */
+        fetch(REGISTRO_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            hora: new Date().toLocaleTimeString("es-AR"),
+            id: socio.ID,
+            nombre: socio.Nombre,
+            apellido: socio.Apellido,
+            dni: socio.DNI,
+            estado: estadoFinal
+          })
+        });
+
       })
       .catch(error => {
         document.querySelector(".card").innerHTML = "<h2>Error al cargar los datos</h2>";
         console.error(error);
       });
+  </script>
+
+</body>
+</html>
+
   </script>
 
 </body>
