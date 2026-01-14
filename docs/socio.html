@@ -158,18 +158,22 @@
         document.getElementById("vence").textContent = "Vence: " + socio.VENCE;
 
         /* ===== REGISTRO AUTOMÁTICO ===== */
-        fetch(REGISTRO_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            hora: new Date().toLocaleTimeString("es-AR"),
-            id: socio.ID,
-            nombre: socio.Nombre,
-            apellido: socio.Apellido,
-            dni: socio.DNI,
-            estado: estadoFinal
-          })
-        });
+       setTimeout(() => {
+  fetch(REGISTRO_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      hora: new Date().toLocaleTimeString("es-AR"),
+      id: socio.ID,
+      nombre: socio.Nombre,
+      apellido: socio.Apellido,
+      dni: socio.DNI,
+      estado: estadoFinal
+    })
+  })
+  .then(res => res.text())
+  .then(txt => console.log("Registro OK:", txt))
+  .catch(err => console.error("Error registro:", err));
+}, 500);
 
       })
       .catch(error => {
