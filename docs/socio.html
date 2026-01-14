@@ -1,42 +1,101 @@
-<script>
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Validación de Socio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-// LINK CSV PUBLICADO
-const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    .card {
+      background: #ffffff;
+      max-width: 420px;
+      margin: 40px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+    .estado {
+      font-weight: bold;
+      font-size: 18px;
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .activo {
+      background: #d4edda;
+      color: #155724;
+    }
+    .inactivo {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
 
+<body>
 
-fetch(CSV_URL)
-  .then(res => res.text())
-  .then(text => {
-    const rows = text.split("\n").map(r => r.split(","));
-    const headers = rows[0];
-    const data = rows.slice(1).map(r =>
-      Object.fromEntries(r.map((v, i) => [headers[i], v]))
-    );
+  <div class="card">
+    <h1>Validación de Socio</h1>
 
-    const socio = data.find(s => s.ID_SOCIO === id);
+    <p><strong>Nombre:</strong> <span id="nombre">—</span></p>
+    <p><strong>Apellido:</strong> <span id="apellido">—</span></p>
+    <p><strong>DNI:</strong> <span id="dni">—</span></p>
 
-    if (!socio) {
-      document.body.innerHTML = "<h2>Socio no encontrado</h2>";
-      return;
+    <div id="estado" class="estado">Cargando...</div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const socioID = params.get("id");
+
+    if (!socioID) {
+      document.querySelector(".card").innerHTML = "<h2>Socio no especificado</h2>";
     }
 
-    document.getElementById("nombre").textContent = socio.NOMBRE;
-    document.getElementById("apellido").textContent = socio.APELLIDO;
-    document.getElementById("dni").textContent = socio.DNI;
+    const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
 
-    const estado = document.getElementById("estado");
+    fetch(SHEET_URL)
+      .then(res => res.json())
+      .then(data => {
+        const socio = data.find(s => s.ID === socioID);
 
-    if (socio.ACTIVO === "SI") {
-      estado.textContent = "SOCIO ACTIVO";
-      estado.className = "activo";
-    } else {
-      estado.textContent = "SOCIO INACTIVO – SOLICITAR DNI";
-      estado.className = "inactivo";
-    }
-  })
-  .catch(() => {
-    document.body.innerHTML = "<h2>Error al cargar datos</h2>";
-  });
-</script>
+        if (!socio) {
+          document.querySelector(".card").innerHTML = "<h2>Socio no encontrado</h2>";
+          return;
+        }
+
+        document.getElementById("nombre").textContent = socio.Nombre;
+        document.getElementById("apellido").textContent = socio.Apellido;
+        document.getElementById("dni").textContent = socio.DNI;
+
+        const estadoDiv = document.getElementById("estado");
+        estadoDiv.textContent = socio.Estado;
+
+        if (socio.Estado === "ACTIVO") {
+          estadoDiv.classList.add("activo");
+        } else {
+          estadoDiv.classList.add("inactivo");
+        }
+      })
+      .catch(err => {
+        document.querySelector(".card").innerHTML = "<h2>Error al cargar los datos</h2>";
+        console.error(err);
+      });
+  </script>
+
+</body>
+</html>
