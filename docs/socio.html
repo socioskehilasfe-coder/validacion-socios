@@ -6,19 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    /* Fondo general */
     body {
       margin: 0;
       padding: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background-color: #0b3c6f; /* azul institucional */
+      background-color: #0b3c6f;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    /* Tarjeta */
     .card {
       background-color: #ffffff;
       width: 100%;
@@ -29,7 +27,6 @@
       text-align: center;
     }
 
-    /* Logo */
     .logo {
       display: block;
       margin: 0 auto 20px auto;
@@ -48,11 +45,6 @@
       margin: 10px 0;
     }
 
-    .dato strong {
-      color: #333;
-    }
-
-    /* Estado */
     .estado {
       margin-top: 22px;
       padding: 12px;
@@ -71,6 +63,12 @@
       color: #a71d2a;
     }
 
+    .vence {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #555;
+    }
+
     footer {
       margin-top: 18px;
       font-size: 12px;
@@ -83,7 +81,6 @@
 
   <div class="card">
 
-    <!-- LOGO -->
     <img src="/validacion-socios/logo.png" alt="Logo Comunidad Israelita de Santa Fe" class="logo">
 
     <h1>Validación de Socio</h1>
@@ -93,6 +90,7 @@
     <div class="dato"><strong>DNI:</strong> <span id="dni">—</span></div>
 
     <div id="estado" class="estado">Cargando...</div>
+    <div id="vence" class="vence"></div>
 
     <footer>
       Comunidad Israelita de Santa Fe
@@ -110,8 +108,13 @@
 
     const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
 
+    function parseFecha(fechaStr) {
+      const [dia, mes, anio] = fechaStr.split("/");
+      return new Date(anio, mes - 1, dia);
+    }
+
     fetch(SHEET_URL)
-      .then(response => response.json())
+      .then(res => res.json())
       .then(data => {
         const socio = data.find(s => s.ID === socioID);
 
@@ -124,14 +127,24 @@
         document.getElementById("apellido").textContent = socio.Apellido;
         document.getElementById("dni").textContent = socio.DNI;
 
-        const estadoDiv = document.getElementById("estado");
-        estadoDiv.textContent = socio.Estado;
+        const hoy = new Date();
+        hoy.setHours(0,0,0,0);
 
-        if (socio.Estado === "ACTIVO") {
-          estadoDiv.classList.add("activo");
-        } else {
+        const fechaVence = parseFecha(socio.VENCE);
+        const vencido = fechaVence < hoy;
+
+        const estadoDiv = document.getElementById("estado");
+        const venceDiv = document.getElementById("vence");
+
+        if (socio.Estado !== "ACTIVO" || vencido) {
+          estadoDiv.textContent = "INACTIVO";
           estadoDiv.classList.add("inactivo");
+        } else {
+          estadoDiv.textContent = "ACTIVO";
+          estadoDiv.classList.add("activo");
         }
+
+        venceDiv.textContent = "Vence: " + socio.VENCE;
       })
       .catch(error => {
         document.querySelector(".card").innerHTML = "<h2>Error al cargar los datos</h2>";
@@ -141,4 +154,3 @@
 
 </body>
 </html>
-
