@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -18,41 +16,62 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
       color: #1f2933;
     }
 
+    /* SPLASH */
+    .splash {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0b3c6f, #092a4a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      animation: fadeOut 0.8s ease forwards;
+      animation-delay: 1.4s;
+    }
+
+    .logo-wrapper {
+      background: white;
+      padding: 18px;
+      border-radius: 50%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .logo-wrapper img {
+      width: 90px;
+      display: block;
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    /* CARD */
     .card {
       background: white;
       width: 100%;
       max-width: 420px;
       padding: 26px;
-      border-radius: 20px;
+      border-radius: 22px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-      animation: fadeIn 0.8s ease-out;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: cardIn 0.8s ease forwards;
+      animation-delay: 1.7s;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .logo {
-      display: block;
-      margin: 0 auto 16px;
-      max-width: 95px;
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
       text-align: center;
       font-size: 22px;
-      margin-bottom: 10px;
       color: #0b3c6f;
+      margin: 18px 0 6px;
     }
 
     .subtitle {
@@ -64,8 +83,8 @@
 
     .beneficio {
       background: #f4f6f8;
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 16px;
+      padding: 16px;
       margin-bottom: 14px;
     }
 
@@ -73,12 +92,13 @@
       display: block;
       font-size: 15px;
       color: #0b3c6f;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .beneficio span {
       font-size: 14px;
       color: #374151;
+      line-height: 1.4;
     }
 
     footer {
@@ -92,33 +112,43 @@
 
 <body>
 
+  <!-- SPLASH -->
+  <div class="splash">
+    <div class="logo-wrapper">
+      <img src="/validacion-socios/logo.png" alt="Logo Comunidad">
+    </div>
+  </div>
+
+  <!-- BENEFICIOS -->
   <div class="card">
 
-    <img src="/validacion-socios/logo.png" alt="Logo Comunidad" class="logo">
+    <div class="logo-wrapper" style="margin: 0 auto;">
+      <img src="/validacion-socios/logo.png" alt="Logo">
+    </div>
 
     <h1>Beneficios Vigentes</h1>
     <div class="subtitle">
       Exclusivos para socios activos
     </div>
 
-    <!-- BENEFICIOS -->
+    <!-- BENEFICIO -->
     <div class="beneficio">
       <strong>Farmacia Santa Fe</strong>
-      <span>10% de descuento en medicamentos presentando DNI</span>
+      <span>10% de descuento en medicamentos presentando DNI.</span>
     </div>
 
     <div class="beneficio">
       <strong>Librería Central</strong>
-      <span>15% de descuento en útiles escolares</span>
+      <span>15% de descuento en útiles escolares.</span>
     </div>
 
     <div class="beneficio">
       <strong>Óptica Visión</strong>
-      <span>20% de descuento en anteojos recetados</span>
+      <span>20% de descuento en anteojos recetados.</span>
     </div>
 
     <footer>
-      Beneficios válidos al momento de la consulta<br>
+      Beneficios sujetos a disponibilidad<br>
       Comunidad Israelita de Santa Fe
     </footer>
 
@@ -127,6 +157,3 @@
 </body>
 </html>
 
-
-</body>
-</html>
