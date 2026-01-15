@@ -6,89 +6,115 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      padding: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #0b3c6f;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #0b3c6f, #092a4a);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      button {
-  margin-top: 18px;
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background-color: #0b3c6f;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #082f55;
-}
-
+      color: #1f2933;
     }
 
     .card {
-      background-color: #ffffff;
+      background: white;
       width: 100%;
-      max-width: 380px;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      max-width: 390px;
+      padding: 26px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
       text-align: center;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .logo {
-      display: block;
-      margin: 0 auto 20px auto;
-      max-width: 110px;
+      max-width: 95px;
+      margin-bottom: 16px;
     }
 
     h1 {
       font-size: 20px;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
       color: #0b3c6f;
     }
 
     .dato {
-      text-align: left;
+      display: flex;
+      justify-content: space-between;
       font-size: 15px;
-      margin: 10px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid #eef1f4;
+    }
+
+    .dato span {
+      font-weight: 600;
     }
 
     .estado {
       margin-top: 22px;
-      padding: 12px;
-      border-radius: 10px;
+      padding: 14px;
+      border-radius: 14px;
       font-size: 18px;
-      font-weight: bold;
+      font-weight: 700;
+      letter-spacing: 0.5px;
     }
 
     .activo {
-      background-color: #e6f4ea;
+      background: linear-gradient(135deg, #e6f4ea, #d2f0dc);
       color: #1e7e34;
     }
 
     .inactivo {
-      background-color: #fbeaea;
+      background: linear-gradient(135deg, #fdeaea, #f8d7da);
       color: #a71d2a;
     }
 
     .vence {
       margin-top: 10px;
       font-size: 13px;
-      color: #555;
+      color: #6b7280;
+    }
+
+    button {
+      margin-top: 22px;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #0b3c6f, #094a86);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      display: none;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
 
     footer {
       margin-top: 18px;
       font-size: 12px;
-      color: #777;
+      color: #6b7280;
     }
   </style>
 </head>
@@ -97,21 +123,31 @@ button:hover {
 
   <div class="card">
 
-    <!-- LOGO -->
-    <img src="/validacion-socios/logo.png" alt="Logo Comunidad Israelita de Santa Fe" class="logo">
+    <img src="/validacion-socios/logo.png" alt="Logo Comunidad" class="logo">
 
-    <h1>Validación de Socio</h1>
+    <h1>Credencial Digital de Socio</h1>
 
-    <div class="dato"><strong>Nombre:</strong> <span id="nombre">—</span></div>
-    <div class="dato"><strong>Apellido:</strong> <span id="apellido">—</span></div>
-    <div class="dato"><strong>DNI:</strong> <span id="dni">—</span></div>
+    <div class="dato">
+      <div>Nombre</div>
+      <span id="nombre">—</span>
+    </div>
 
-    <div id="estado" class="estado">Cargando...</div>
+    <div class="dato">
+      <div>Apellido</div>
+      <span id="apellido">—</span>
+    </div>
+
+    <div class="dato">
+      <div>DNI</div>
+      <span id="dni">—</span>
+    </div>
+
+    <div id="estado" class="estado">Cargando…</div>
     <div id="vence" class="vence"></div>
-    <button id="beneficiosBtn" style="display:none;">
-  ¿Cuáles son tus beneficios?
-</button>
 
+    <button id="beneficiosBtn">
+      ¿Cuáles son tus beneficios?
+    </button>
 
     <footer>
       Comunidad Israelita de Santa Fe
@@ -120,24 +156,11 @@ button:hover {
   </div>
 
   <script>
-    /* =========================
-       CONFIGURACIÓN (CAMBIAR)
-       ========================= */
-
-    // 🔴 1) ID DE TU GOOGLE SHEET
     const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
-
-    // 🔴 2) URL DEL APPS SCRIPT (termina en /exec)
     const REGISTRO_URL = "https://script.google.com/macros/s/AKfycbwoOOwECfYTHWG319-VZhofCU1CeHEKkocTIPkc_2B3bISL8oiKxhM50ACWiJh0jHeW/exec";
-
-    /* ========================= */
 
     const params = new URLSearchParams(window.location.search);
     const socioID = params.get("id");
-
-    if (!socioID) {
-      document.querySelector(".card").innerHTML = "<h2>Socio no especificado</h2>";
-    }
 
     function parseFecha(fechaStr) {
       const [dia, mes, anio] = fechaStr.split("/");
@@ -161,58 +184,37 @@ button:hover {
         const hoy = new Date();
         hoy.setHours(0,0,0,0);
 
-        const fechaVence = parseFecha(socio.VENCE);
-        const vencido = fechaVence < hoy;
-
-        let estadoFinal = "ACTIVO";
-        if (socio.Estado !== "ACTIVO" || vencido) {
-          estadoFinal = "INACTIVO";
-        }
+        const vencido = parseFecha(socio.VENCE) < hoy;
+        const estadoFinal = socio.Estado === "ACTIVO" && !vencido ? "ACTIVO" : "INACTIVO";
 
         const estadoDiv = document.getElementById("estado");
         estadoDiv.textContent = estadoFinal;
-        if (estadoFinal === "ACTIVO") {
-  const btn = document.getElementById("beneficiosBtn");
-  btn.style.display = "block";
-  btn.onclick = () => {
-    window.location.href = "/validacion-socios/beneficios.html";
-  };
-}
-
-        estadoDiv.classList.add(
-          estadoFinal === "ACTIVO" ? "activo" : "inactivo"
-        );
+        estadoDiv.classList.add(estadoFinal === "ACTIVO" ? "activo" : "inactivo");
 
         document.getElementById("vence").textContent = "Vence: " + socio.VENCE;
 
-        /* ===== REGISTRO AUTOMÁTICO ===== */
-       setTimeout(() => {
-  fetch(REGISTRO_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      hora: new Date().toLocaleTimeString("es-AR"),
-      id: socio.ID,
-      nombre: socio.Nombre,
-      apellido: socio.Apellido,
-      dni: socio.DNI,
-      estado: estadoFinal
-    })
-  })
-  .then(res => res.text())
-  .then(txt => console.log("Registro OK:", txt))
-  .catch(err => console.error("Error registro:", err));
-}, 500);
+        if (estadoFinal === "ACTIVO") {
+          const btn = document.getElementById("beneficiosBtn");
+          btn.style.display = "block";
+          btn.onclick = () => {
+            window.location.href = "/validacion-socios/beneficios.html";
+          };
+        }
 
-      })
-      .catch(error => {
-        document.querySelector(".card").innerHTML = "<h2>Error al cargar los datos</h2>";
-        console.error(error);
+        setTimeout(() => {
+          fetch(REGISTRO_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              hora: new Date().toLocaleTimeString("es-AR"),
+              id: socio.ID,
+              nombre: socio.Nombre,
+              apellido: socio.Apellido,
+              dni: socio.DNI,
+              estado: estadoFinal
+            })
+          });
+        }, 500);
       });
-  </script>
-
-</body>
-</html>
-
   </script>
 
 </body>
