@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -34,14 +32,16 @@
       animation-delay: 1.6s;
     }
 
-    .splash img {
-      width: 120px;
-      animation: scaleIn 1s ease;
+    .logo-wrapper {
+      background: white;
+      padding: 18px;
+      border-radius: 50%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
-    @keyframes scaleIn {
-      from { transform: scale(0.85); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    .logo-wrapper img {
+      width: 90px;
+      display: block;
     }
 
     @keyframes fadeOut {
@@ -54,7 +54,7 @@
       width: 100%;
       max-width: 390px;
       padding: 26px;
-      border-radius: 20px;
+      border-radius: 22px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.25);
       text-align: center;
       opacity: 0;
@@ -64,21 +64,13 @@
     }
 
     @keyframes cardIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .logo {
-      max-width: 90px;
-      margin-bottom: 14px;
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
       font-size: 20px;
       color: #0b3c6f;
-      margin-bottom: 20px;
+      margin: 18px 0 20px;
     }
 
     .dato {
@@ -89,9 +81,7 @@
       font-size: 15px;
     }
 
-    .dato span {
-      font-weight: 600;
-    }
+    .dato span { font-weight: 600; }
 
     .estado {
       margin-top: 22px;
@@ -117,18 +107,26 @@
       color: #6b7280;
     }
 
-    button {
-      margin-top: 22px;
+    /* BOTÓN BENEFICIOS */
+    .beneficios-btn {
+      margin-top: 24px;
       width: 100%;
-      padding: 14px;
+      padding: 15px;
       border: none;
-      border-radius: 14px;
+      border-radius: 16px;
       background: linear-gradient(135deg, #0b3c6f, #094a86);
       color: white;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       display: none;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .beneficios-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 26px rgba(0,0,0,0.25);
     }
 
     footer {
@@ -143,97 +141,73 @@
 
   <!-- SPLASH -->
   <div class="splash">
-    <img src="/validacion-socios/logo.png" alt="Logo Comunidad">
+    <div class="logo-wrapper">
+      <img src="/validacion-socios/logo.png" alt="Logo Comunidad">
+    </div>
   </div>
 
   <!-- CREDENCIAL -->
   <div class="card">
 
-    <img src="/validacion-socios/logo.png" class="logo" alt="Logo">
-
-    <h1>Carne Digital Socios</h1>
-
-    <div class="dato">
-      <div>Nombre</div>
-      <span id="nombre">—</span>
+    <div class="logo-wrapper" style="margin: 0 auto;">
+      <img src="/validacion-socios/logo.png" alt="Logo">
     </div>
 
-    <div class="dato">
-      <div>Apellido</div>
-      <span id="apellido">—</span>
-    </div>
+    <h1>Credencial Digital de Socio</h1>
 
-    <div class="dato">
-      <div>DNI</div>
-      <span id="dni">—</span>
-    </div>
+    <div class="dato"><div>Nombre</div><span id="nombre">—</span></div>
+    <div class="dato"><div>Apellido</div><span id="apellido">—</span></div>
+    <div class="dato"><div>DNI</div><span id="dni">—</span></div>
 
     <div id="estado" class="estado">Cargando…</div>
     <div id="vence" class="vence"></div>
 
-    <button id="beneficiosBtn">
-      ¿Cuáles son tus beneficios?
+    <button id="beneficiosBtn" class="beneficios-btn">
+      🎁 ¿Cuáles son tus beneficios?
     </button>
 
-    <footer>
-      Comunidad Israelita de Santa Fe
-    </footer>
-
+    <footer>Comunidad Israelita de Santa Fe</footer>
   </div>
 
   <script>
     const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
     const REGISTRO_URL = "https://script.google.com/macros/s/AKfycbwoOOwECfYTHWG319-VZhofCU1CeHEKkocTIPkc_2B3bISL8oiKxhM50ACWiJh0jHeW/exec";
 
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const socioID = params.get("id");
 
-    function parseFecha(fechaStr) {
-      const [d, m, a] = fechaStr.split("/");
-      return new Date(a, m - 1, d);
+    function parseFecha(f) {
+      const [d,m,a] = f.split("/");
+      return new Date(a, m-1, d);
     }
 
-    fetch(SHEET_URL)
-      .then(res => res.json())
-      .then(data => {
-        const socio = data.find(s => s.ID === socioID);
-        if (!socio) return;
+    fetch(SHEET_URL).then(r=>r.json()).then(data=>{
+      const s = data.find(x=>x.ID===socioID);
+      if(!s) return;
 
-        nombre.textContent = socio.Nombre;
-        apellido.textContent = socio.Apellido;
-        dni.textContent = socio.DNI;
+      nombre.textContent = s.Nombre;
+      apellido.textContent = s.Apellido;
+      dni.textContent = s.DNI;
 
-        const hoy = new Date();
-        hoy.setHours(0,0,0,0);
+      const hoy = new Date(); hoy.setHours(0,0,0,0);
+      const estadoFinal = s.Estado==="ACTIVO" && parseFecha(s.VENCE)>=hoy ? "ACTIVO" : "INACTIVO";
 
-        const vencido = parseFecha(socio.VENCE) < hoy;
-        const estadoFinal = socio.Estado === "ACTIVO" && !vencido ? "ACTIVO" : "INACTIVO";
+      estado.textContent = estadoFinal;
+      estado.classList.add(estadoFinal==="ACTIVO"?"activo":"inactivo");
+      vence.textContent = "Vence: " + s.VENCE;
 
-        estado.textContent = estadoFinal;
-        estado.classList.add(estadoFinal === "ACTIVO" ? "activo" : "inactivo");
-        vence.textContent = "Vence: " + socio.VENCE;
+      if(estadoFinal==="ACTIVO"){
+        beneficiosBtn.style.display="block";
+        beneficiosBtn.onclick=()=>location.href="/validacion-socios/beneficios.html";
+      }
 
-        if (estadoFinal === "ACTIVO") {
-          beneficiosBtn.style.display = "block";
-          beneficiosBtn.onclick = () => {
-            location.href = "/validacion-socios/beneficios.html";
-          };
-        }
-
-        setTimeout(() => {
-          fetch(REGISTRO_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              hora: new Date().toLocaleTimeString("es-AR"),
-              id: socio.ID,
-              nombre: socio.Nombre,
-              apellido: socio.Apellido,
-              dni: socio.DNI,
-              estado: estadoFinal
-            })
-          });
-        }, 800);
-      });
+      setTimeout(()=>{
+        fetch(REGISTRO_URL,{method:"POST",body:JSON.stringify({
+          hora:new Date().toLocaleTimeString("es-AR"),
+          id:s.ID,nombre:s.Nombre,apellido:s.Apellido,dni:s.DNI,estado:estadoFinal
+        })});
+      },800);
+    });
   </script>
 
 </body>
