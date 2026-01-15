@@ -15,6 +15,22 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      button {
+  margin-top: 18px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background-color: #0b3c6f;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #082f55;
+}
+
     }
 
     .card {
@@ -92,6 +108,10 @@
 
     <div id="estado" class="estado">Cargando...</div>
     <div id="vence" class="vence"></div>
+    <button id="beneficiosBtn" style="display:none;">
+  ¿Cuáles son tus beneficios?
+</button>
+
 
     <footer>
       Comunidad Israelita de Santa Fe
@@ -151,6 +171,14 @@
 
         const estadoDiv = document.getElementById("estado");
         estadoDiv.textContent = estadoFinal;
+        if (estadoFinal === "ACTIVO") {
+  const btn = document.getElementById("beneficiosBtn");
+  btn.style.display = "block";
+  btn.onclick = () => {
+    window.location.href = "/validacion-socios/beneficios.html";
+  };
+}
+
         estadoDiv.classList.add(
           estadoFinal === "ACTIVO" ? "activo" : "inactivo"
         );
