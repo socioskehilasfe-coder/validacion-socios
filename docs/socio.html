@@ -112,6 +112,11 @@
       font-size: 15px;
       border: 1px solid #0b3c6f;
     }
+
+    .btn.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
   </style>
 </head>
 
@@ -130,14 +135,15 @@
   <div id="estado" class="estado"></div>
   <div id="fechaHora" class="fecha"></div>
 
-  <!-- NEGOCIOS -->
+  <!-- COMERCIOS -->
   <select id="comercioSelect">
     <option value="">Seleccionar comercio</option>
   </select>
 
   <div id="beneficioBox" class="beneficio"></div>
 
-  <a href="beneficios.html" class="btn">¿Cuáles son tus beneficios?</a>
+  <!-- VALIDAR -->
+  <a href="#" id="btnValidar" class="btn">Validar beneficio</a>
 
 </div>
 
@@ -151,21 +157,23 @@
   const BENEFICIOS_URL =
     "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/BENEFICIOS";
 
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoOOwECfYTHWG319-VZhofCU1CeHEKkocTIPkc_2B3bISL8oiKxhM50ACWiJh0jHeW/exec";
+
   /* FECHA Y HORA */
   const ahora = new Date();
-  document.getElementById("fechaHora").textContent =
-    `Ingresó el ${ahora.toLocaleDateString("es-AR")} – ${ahora.toLocaleTimeString("es-AR", {
-      hour: "2-digit",
-      minute: "2-digit"
-    })} hs`;
+  const fecha = ahora.toLocaleDateString("es-AR");
+  const hora = ahora.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
 
+  fechaHora.textContent = `Ingresó el ${fecha} – ${hora} hs`;
+
+  let socio = null;
   let beneficios = [];
 
   /* CARGAR SOCIO */
   fetch(SOCIOS_URL)
     .then(res => res.json())
     .then(data => {
-      const socio = data.find(s => s.ID === id);
+      socio = data.find(s => s.ID === id);
       if (!socio) {
         document.getElementById("card").innerHTML = "<h1>Socio no encontrado</h1>";
         return;
@@ -181,6 +189,7 @@
       } else {
         estado.textContent = "SOCIO INACTIVO";
         estado.classList.add("inactivo");
+        document.getElementById("btnValidar").classList.add("disabled");
       }
     });
 
@@ -210,6 +219,37 @@
       beneficioBox.textContent = "Este comercio no tiene beneficio";
       beneficioBox.className = "beneficio error";
     }
+  });
+
+  /* VALIDAR Y REGISTRAR */
+  document.getElementById("btnValidar").addEventListener("click", (e) => {
+    e.preventDefault();
+
+    if (!socio || socio.Estado !== "ACTIVO") return;
+
+    const comercio = comercioSelect.value;
+    const beneficio = beneficioBox.textContent;
+
+    if (!comercio || !beneficioBox.classList.contains("ok")) {
+      alert("Seleccioná un comercio válido");
+      return;
+    }
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        id: socio.ID,
+        nombre: socio.Nombre,
+        apellido: socio.Apellido,
+        dni: socio.DNI,
+        comercio: comercio,
+        beneficio: beneficio.replace("Beneficio: ", ""),
+        fecha: fecha,
+        hora: hora
+      })
+    });
+
+    alert("Beneficio validado y registrado correctamente");
   });
 </script>
 
