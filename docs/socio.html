@@ -37,26 +37,16 @@
 
     .logo-splash {
       width: 150px;
-      max-width: 70%;
       animation: logoIn 0.9s ease forwards;
     }
 
     @keyframes logoIn {
-      from {
-        opacity: 0;
-        transform: scale(0.94);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+      from { opacity: 0; transform: scale(0.94); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     @keyframes splashOut {
-      to {
-        opacity: 0;
-        visibility: hidden;
-      }
+      to { opacity: 0; visibility: hidden; }
     }
 
     /* CARD */
@@ -75,10 +65,7 @@
     }
 
     @keyframes cardIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .logo-card {
@@ -89,17 +76,17 @@
     h1 {
       font-size: 20px;
       color: #0b3c6f;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .dato {
-      margin: 8px 0;
+      margin: 6px 0;
       font-size: 15px;
       color: #374151;
     }
 
     .estado {
-      margin-top: 16px;
+      margin-top: 14px;
       padding: 10px;
       border-radius: 14px;
       font-weight: 600;
@@ -116,10 +103,26 @@
       color: #991b1b;
     }
 
-    /* BOTONES MINIMAL */
+    .fecha {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    /* INPUT */
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 14px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+    }
+
+    /* BOTÓN */
     .btn {
       display: block;
-      margin-top: 18px;
+      margin-top: 16px;
       padding: 12px;
       background: transparent;
       color: #0b3c6f;
@@ -128,7 +131,6 @@
       font-size: 15px;
       border: 1px solid #0b3c6f;
       transition: transform 0.12s ease, opacity 0.12s ease;
-      user-select: none;
     }
 
     .btn:active {
@@ -142,14 +144,13 @@
 
   <!-- SPLASH -->
   <div class="splash">
-    <img src="logo.png" alt="Logo Comunidad" class="logo-splash">
+    <img src="logo.png" class="logo-splash" alt="Logo">
   </div>
 
-  <!-- CREDENCIAL -->
+  <!-- CARD -->
   <div class="card" id="card">
 
-    <img src="logo.png" class="logo-card" alt="Logo Comunidad">
-
+    <img src="logo.png" class="logo-card" alt="Logo">
     <h1>Credencial de Socio</h1>
 
     <div class="dato"><strong>Nombre:</strong> <span id="nombre"></span></div>
@@ -157,6 +158,13 @@
     <div class="dato"><strong>DNI:</strong> <span id="dni"></span></div>
 
     <div id="estado" class="estado"></div>
+    <div id="fechaHora" class="fecha"></div>
+
+    <input type="text" id="comercio" placeholder="Nombre del comercio o persona">
+
+    <a href="#" class="btn" onclick="registrarValidacion()">
+      Validar socio
+    </a>
 
     <a href="beneficios.html" class="btn">
       ¿Cuáles son tus beneficios?
@@ -168,38 +176,65 @@
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
 
-    const SHEET_URL =
-      "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+    const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+    const SCRIPT_URL = "PEGÁ_ACÁ_TU_URL_DEL_APPS_SCRIPT";
+
+    const ahora = new Date();
+    const fechaTexto = ahora.toLocaleDateString("es-AR");
+    const horaTexto = ahora.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+    document.getElementById("fechaHora").textContent =
+      `Validado el ${fechaTexto} – ${horaTexto} hs`;
+
+    let socioGlobal = null;
 
     fetch(SHEET_URL)
       .then(res => res.json())
       .then(data => {
-        const socio = data.find(s => s.ID === id);
+        socioGlobal = data.find(s => s.ID === id);
 
-        if (!socio) {
-          document.getElementById("card").innerHTML =
-            "<h1>Socio no encontrado</h1>";
+        if (!socioGlobal) {
+          document.getElementById("card").innerHTML = "<h1>Socio no encontrado</h1>";
           return;
         }
 
-        document.getElementById("nombre").textContent = socio.Nombre;
-        document.getElementById("apellido").textContent = socio.Apellido;
-        document.getElementById("dni").textContent = socio.DNI;
+        nombre.textContent = socioGlobal.Nombre;
+        apellido.textContent = socioGlobal.Apellido;
+        dni.textContent = socioGlobal.DNI;
 
         const estadoDiv = document.getElementById("estado");
 
-        if (socio.Estado === "ACTIVO") {
+        if (socioGlobal.Estado === "ACTIVO") {
           estadoDiv.textContent = "SOCIO ACTIVO";
           estadoDiv.classList.add("activo");
         } else {
           estadoDiv.textContent = "SOCIO INACTIVO";
           estadoDiv.classList.add("inactivo");
         }
-      })
-      .catch(() => {
-        document.getElementById("card").innerHTML =
-          "<h1>Error al cargar los datos</h1>";
       });
+
+    function registrarValidacion() {
+      const comercio = document.getElementById("comercio").value.trim();
+      if (!comercio) {
+        alert("Por favor ingresá el nombre del comercio o persona");
+        return;
+      }
+
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          id: socioGlobal.ID,
+          nombre: socioGlobal.Nombre,
+          apellido: socioGlobal.Apellido,
+          dni: socioGlobal.DNI,
+          estado: socioGlobal.Estado,
+          comercio: comercio,
+          fecha: fechaTexto,
+          hora: horaTexto
+        })
+      });
+
+      alert("Validación registrada correctamente");
+    }
   </script>
 
 </body>
