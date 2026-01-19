@@ -19,58 +19,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
     }
 
-    /* SPLASH */
-    .splash {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(135deg, #0b3c6f, #092a4a);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      animation: splashOut 0.8s ease forwards;
-      animation-delay: 1.3s;
-    }
-
-    .logo-splash {
-      width: 150px;
-      animation: logoIn 0.9s ease forwards;
-    }
-
-    @keyframes logoIn {
-      from { opacity: 0; transform: scale(0.94); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes splashOut {
-      to { opacity: 0; visibility: hidden; }
-    }
-
-    /* CARD */
     .card {
-      background: #ffffff;
+      background: #fff;
       width: 100%;
       max-width: 380px;
       padding: 26px 22px;
       border-radius: 24px;
-      box-shadow: 0 18px 36px rgba(0,0,0,0.28);
+      box-shadow: 0 18px 36px rgba(0,0,0,.3);
       text-align: center;
-      opacity: 0;
-      transform: translateY(18px);
-      animation: cardIn 0.7s ease forwards;
-      animation-delay: 1.6s;
-    }
-
-    @keyframes cardIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .logo-card {
-      width: 78px;
-      margin-bottom: 12px;
     }
 
     h1 {
@@ -80,8 +38,8 @@
     }
 
     .dato {
-      margin: 6px 0;
       font-size: 15px;
+      margin: 6px 0;
       color: #374151;
     }
 
@@ -93,149 +51,166 @@
       font-size: 14px;
     }
 
-    .activo {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .inactivo {
-      background: #fee2e2;
-      color: #991b1b;
-    }
+    .activo { background: #dcfce7; color: #166534; }
+    .inactivo { background: #fee2e2; color: #991b1b; }
 
     .fecha {
-      margin-top: 10px;
+      margin-top: 8px;
       font-size: 13px;
       color: #6b7280;
     }
 
-    /* INPUT */
-    input {
+    select {
       width: 100%;
+      margin-top: 16px;
       padding: 10px;
-      margin-top: 14px;
       border-radius: 12px;
       border: 1px solid #cbd5e1;
       font-size: 14px;
     }
 
-    /* BOTÓN */
-    .btn {
-      display: block;
-      margin-top: 16px;
-      padding: 12px;
-      background: transparent;
-      color: #0b3c6f;
-      text-decoration: none;
-      border-radius: 14px;
-      font-size: 15px;
-      border: 1px solid #0b3c6f;
-      transition: transform 0.12s ease, opacity 0.12s ease;
+    .beneficio {
+      margin-top: 12px;
+      font-size: 14px;
+      padding: 10px;
+      border-radius: 12px;
+      display: none;
     }
 
-    .btn:active {
-      transform: scale(0.96);
-      opacity: 0.7;
+    .beneficio.ok {
+      background: #e0f2fe;
+      color: #075985;
+      display: block;
+    }
+
+    .beneficio.error {
+      background: #fee2e2;
+      color: #991b1b;
+      display: block;
+    }
+
+    .btn {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid #0b3c6f;
+      background: transparent;
+      color: #0b3c6f;
+      font-size: 15px;
+    }
+
+    .btn.disabled {
+      opacity: .4;
+      pointer-events: none;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- SPLASH -->
-  <div class="splash">
-    <img src="logo.png" class="logo-splash" alt="Logo">
-  </div>
+<div class="card">
+  <h1>Credencial de Socio</h1>
 
-  <!-- CARD -->
-  <div class="card" id="card">
+  <div class="dato"><strong>Nombre:</strong> <span id="nombre"></span></div>
+  <div class="dato"><strong>Apellido:</strong> <span id="apellido"></span></div>
+  <div class="dato"><strong>DNI:</strong> <span id="dni"></span></div>
 
-    <img src="logo.png" class="logo-card" alt="Logo">
-    <h1>Credencial de Socio</h1>
+  <div id="estado" class="estado"></div>
+  <div id="fechaHora" class="fecha"></div>
 
-    <div class="dato"><strong>Nombre:</strong> <span id="nombre"></span></div>
-    <div class="dato"><strong>Apellido:</strong> <span id="apellido"></span></div>
-    <div class="dato"><strong>DNI:</strong> <span id="dni"></span></div>
+  <select id="comercioSelect">
+    <option value="">Seleccionar comercio</option>
+  </select>
 
-    <div id="estado" class="estado"></div>
-    <div id="fechaHora" class="fecha"></div>
+  <div id="beneficioBox" class="beneficio"></div>
 
-    <input type="text" id="comercio" placeholder="Nombre del comercio o persona">
+  <button id="btnValidar" class="btn" onclick="registrar()">Validar beneficio</button>
+</div>
 
-    <a href="#" class="btn" onclick="registrarValidacion()">
-      Validar socio
-    </a>
+<script>
+  const SOCIOS_URL = "https://opensheet.elk.sh/TU_SHEET_ID/SOCIOS";
+  const BENEFICIOS_URL = "https://opensheet.elk.sh/TU_SHEET_ID/BENEFICIOS";
+  const SCRIPT_URL = "PEGÁ_ACÁ_TU_APPS_SCRIPT";
 
-    <a href="beneficios.html" class="btn">
-      ¿Cuáles son tus beneficios?
-    </a>
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
 
-  </div>
+  const ahora = new Date();
+  fechaHora.textContent =
+    `Validado el ${ahora.toLocaleDateString("es-AR")} – ${ahora.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})} hs`;
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
+  let socio;
+  let beneficios = [];
 
-    const SHEET_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
-    const SCRIPT_URL = "PEGÁ_ACÁ_TU_URL_DEL_APPS_SCRIPT";
+  fetch(SOCIOS_URL)
+    .then(r => r.json())
+    .then(data => {
+      socio = data.find(s => s.ID === id);
+      if (!socio) return alert("Socio no encontrado");
 
-    const ahora = new Date();
-    const fechaTexto = ahora.toLocaleDateString("es-AR");
-    const horaTexto = ahora.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
-    document.getElementById("fechaHora").textContent =
-      `Validado el ${fechaTexto} – ${horaTexto} hs`;
+      nombre.textContent = socio.Nombre;
+      apellido.textContent = socio.Apellido;
+      dni.textContent = socio.DNI;
 
-    let socioGlobal = null;
-
-    fetch(SHEET_URL)
-      .then(res => res.json())
-      .then(data => {
-        socioGlobal = data.find(s => s.ID === id);
-
-        if (!socioGlobal) {
-          document.getElementById("card").innerHTML = "<h1>Socio no encontrado</h1>";
-          return;
-        }
-
-        nombre.textContent = socioGlobal.Nombre;
-        apellido.textContent = socioGlobal.Apellido;
-        dni.textContent = socioGlobal.DNI;
-
-        const estadoDiv = document.getElementById("estado");
-
-        if (socioGlobal.Estado === "ACTIVO") {
-          estadoDiv.textContent = "SOCIO ACTIVO";
-          estadoDiv.classList.add("activo");
-        } else {
-          estadoDiv.textContent = "SOCIO INACTIVO";
-          estadoDiv.classList.add("inactivo");
-        }
-      });
-
-    function registrarValidacion() {
-      const comercio = document.getElementById("comercio").value.trim();
-      if (!comercio) {
-        alert("Por favor ingresá el nombre del comercio o persona");
-        return;
+      if (socio.Estado === "ACTIVO") {
+        estado.textContent = "SOCIO ACTIVO";
+        estado.classList.add("activo");
+      } else {
+        estado.textContent = "SOCIO INACTIVO";
+        estado.classList.add("inactivo");
+        btnValidar.classList.add("disabled");
       }
+    });
 
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          id: socioGlobal.ID,
-          nombre: socioGlobal.Nombre,
-          apellido: socioGlobal.Apellido,
-          dni: socioGlobal.DNI,
-          estado: socioGlobal.Estado,
-          comercio: comercio,
-          fecha: fechaTexto,
-          hora: horaTexto
-        })
+  fetch(BENEFICIOS_URL)
+    .then(r => r.json())
+    .then(data => {
+      beneficios = data;
+      data.forEach(b => {
+        const opt = document.createElement("option");
+        opt.value = b.Comercio;
+        opt.textContent = b.Comercio;
+        comercioSelect.appendChild(opt);
       });
+    });
 
-      alert("Validación registrada correctamente");
+  comercioSelect.addEventListener("change", () => {
+    const seleccionado = beneficios.find(
+      b => b.Comercio === comercioSelect.value
+    );
+
+    if (seleccionado) {
+      beneficioBox.textContent = "Beneficio: " + seleccionado.Beneficio;
+      beneficioBox.className = "beneficio ok";
+    } else {
+      beneficioBox.textContent = "Este comercio no tiene convenio";
+      beneficioBox.className = "beneficio error";
     }
-  </script>
+  });
+
+  function registrar() {
+    const seleccionado = beneficios.find(
+      b => b.Comercio === comercioSelect.value
+    );
+
+    if (!seleccionado) {
+      alert("Este comercio no tiene beneficio");
+      return;
+    }
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        socio: socio.ID,
+        comercio: seleccionado.Comercio,
+        beneficio: seleccionado.Beneficio,
+        fecha: ahora.toISOString()
+      })
+    });
+
+    alert("Beneficio validado correctamente");
+  }
+</script>
 
 </body>
 </html>
