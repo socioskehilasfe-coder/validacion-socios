@@ -20,33 +20,43 @@
     }
 
     /* SPLASH */
-    .splash {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(135deg, #0b3c6f, #092a4a);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      animation: fadeOut 0.8s ease forwards;
-      animation-delay: 1.6s;
-    }
+   /* SPLASH */
+.splash {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0b3c6f, #092a4a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  animation: fadeOut 0.8s ease forwards;
+  animation-delay: 1.4s;
+}
 
-    .logo-wrapper {
-      background: white;
-      padding: 18px;
-      border-radius: 50%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
+.logo-splash {
+  width: 180px;
+  max-width: 70%;
+  animation: logoIn 1s ease forwards;
+}
 
-    .logo-wrapper img {
-      width: 90px;
-      display: block;
-    }
+@keyframes logoIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
-    @keyframes fadeOut {
-      to { opacity: 0; visibility: hidden; }
-    }
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 
     /* CARD */
     .card {
@@ -142,7 +152,7 @@
   <!-- SPLASH -->
   <div class="splash">
     <div class="logo-wrapper">
-      <img src="/validacion-socios/logo.png" alt="Logo Comunidad">
+      <img src="logo.png" class="logo-splash" alt="Logo Comunidad">
     </div>
   </div>
 
