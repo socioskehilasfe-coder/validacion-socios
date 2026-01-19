@@ -22,24 +22,29 @@
     }
 
     .card {
-      background: #fff;
+      background: #ffffff;
       width: 100%;
       max-width: 380px;
       padding: 26px 22px;
       border-radius: 24px;
-      box-shadow: 0 18px 36px rgba(0,0,0,.3);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.28);
       text-align: center;
+    }
+
+    .logo-card {
+      width: 78px;
+      margin-bottom: 12px;
     }
 
     h1 {
       font-size: 20px;
       color: #0b3c6f;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .dato {
-      font-size: 15px;
       margin: 6px 0;
+      font-size: 15px;
       color: #374151;
     }
 
@@ -51,8 +56,15 @@
       font-size: 14px;
     }
 
-    .activo { background: #dcfce7; color: #166534; }
-    .inactivo { background: #fee2e2; color: #991b1b; }
+    .activo {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .inactivo {
+      background: #fee2e2;
+      color: #991b1b;
+    }
 
     .fecha {
       margin-top: 8px;
@@ -71,9 +83,9 @@
 
     .beneficio {
       margin-top: 12px;
-      font-size: 14px;
       padding: 10px;
       border-radius: 12px;
+      font-size: 14px;
       display: none;
     }
 
@@ -90,25 +102,25 @@
     }
 
     .btn {
+      display: block;
       margin-top: 16px;
       padding: 12px;
-      border-radius: 14px;
-      border: 1px solid #0b3c6f;
       background: transparent;
       color: #0b3c6f;
+      text-decoration: none;
+      border-radius: 14px;
       font-size: 15px;
-    }
-
-    .btn.disabled {
-      opacity: .4;
-      pointer-events: none;
+      border: 1px solid #0b3c6f;
     }
   </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="card" id="card">
+
+  <img src="logo.png" class="logo-card" alt="Logo Comunidad">
+
   <h1>Credencial de Socio</h1>
 
   <div class="dato"><strong>Nombre:</strong> <span id="nombre"></span></div>
@@ -118,35 +130,46 @@
   <div id="estado" class="estado"></div>
   <div id="fechaHora" class="fecha"></div>
 
+  <!-- NEGOCIOS -->
   <select id="comercioSelect">
     <option value="">Seleccionar comercio</option>
   </select>
 
   <div id="beneficioBox" class="beneficio"></div>
 
-  <button id="btnValidar" class="btn" onclick="registrar()">Validar beneficio</button>
+  <a href="beneficios.html" class="btn">¿Cuáles son tus beneficios?</a>
+
 </div>
 
 <script>
-  const SOCIOS_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
-  const BENEFICIOS_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/BENEFICIOS";
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoOOwECfYTHWG319-VZhofCU1CeHEKkocTIPkc_2B3bISL8oiKxhM50ACWiJh0jHeW/exec";
-
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
 
-  const ahora = new Date();
-  fechaHora.textContent =
-    `Validado el ${ahora.toLocaleDateString("es-AR")} – ${ahora.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})} hs`;
+  const SOCIOS_URL =
+    "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
 
-  let socio;
+  const BENEFICIOS_URL =
+    "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/BENEFICIOS";
+
+  /* FECHA Y HORA */
+  const ahora = new Date();
+  document.getElementById("fechaHora").textContent =
+    `Ingresó el ${ahora.toLocaleDateString("es-AR")} – ${ahora.toLocaleTimeString("es-AR", {
+      hour: "2-digit",
+      minute: "2-digit"
+    })} hs`;
+
   let beneficios = [];
 
+  /* CARGAR SOCIO */
   fetch(SOCIOS_URL)
-    .then(r => r.json())
+    .then(res => res.json())
     .then(data => {
-      socio = data.find(s => s.ID === id);
-      if (!socio) return alert("Socio no encontrado");
+      const socio = data.find(s => s.ID === id);
+      if (!socio) {
+        document.getElementById("card").innerHTML = "<h1>Socio no encontrado</h1>";
+        return;
+      }
 
       nombre.textContent = socio.Nombre;
       apellido.textContent = socio.Apellido;
@@ -158,12 +181,12 @@
       } else {
         estado.textContent = "SOCIO INACTIVO";
         estado.classList.add("inactivo");
-        btnValidar.classList.add("disabled");
       }
     });
 
+  /* CARGAR BENEFICIOS */
   fetch(BENEFICIOS_URL)
-    .then(r => r.json())
+    .then(res => res.json())
     .then(data => {
       beneficios = data;
       data.forEach(b => {
@@ -174,6 +197,7 @@
       });
     });
 
+  /* MOSTRAR BENEFICIO */
   comercioSelect.addEventListener("change", () => {
     const seleccionado = beneficios.find(
       b => b.Comercio === comercioSelect.value
@@ -183,33 +207,10 @@
       beneficioBox.textContent = "Beneficio: " + seleccionado.Beneficio;
       beneficioBox.className = "beneficio ok";
     } else {
-      beneficioBox.textContent = "Este comercio no tiene convenio";
+      beneficioBox.textContent = "Este comercio no tiene beneficio";
       beneficioBox.className = "beneficio error";
     }
   });
-
-  function registrar() {
-    const seleccionado = beneficios.find(
-      b => b.Comercio === comercioSelect.value
-    );
-
-    if (!seleccionado) {
-      alert("Este comercio no tiene beneficio");
-      return;
-    }
-
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        socio: socio.ID,
-        comercio: seleccionado.Comercio,
-        beneficio: seleccionado.Beneficio,
-        fecha: ahora.toISOString()
-      })
-    });
-
-    alert("Beneficio validado correctamente");
-  }
 </script>
 
 </body>
