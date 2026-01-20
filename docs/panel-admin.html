@@ -1,80 +1,147 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Panel Administrador</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Panel Administrador</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      background: #f1f5f9;
-      font-family: Arial, sans-serif;
-      padding: 24px;
-    }
-
-    .card {
-      background: white;
-      max-width: 500px;
-      margin: auto;
-      padding: 24px;
-      border-radius: 24px;
-    }
-
-    input, select, button {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      background: #0b3c6f;
-      color: white;
-      border: none;
-    }
-  </style>
+<style>
+body {margin:0;font-family:Arial;background:#f1f5f9;}
+header {
+  background:#0b3c6f;
+  color:white;
+  padding:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+nav button {
+  margin-right:6px;
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  background:#e5e7eb;
+}
+section {
+  display:none;
+  padding:24px;
+}
+section.active {display:block;}
+.card {
+  background:white;
+  padding:20px;
+  border-radius:20px;
+  max-width:500px;
+}
+input,select,button {
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border-radius:10px;
+}
+</style>
 </head>
 
 <body>
 
+<header>
+  <strong>Panel Administrador</strong>
+  <nav>
+    <button onclick="show('alta')">Alta socio</button>
+    <button onclick="show('socios')">Socios</button>
+    <button onclick="show('stats')">Estadísticas</button>
+    <button onclick="show('log')">Ingresos</button>
+    <button onclick="logout()">Cerrar sesión</button>
+  </nav>
+</header>
+
+<section id="alta" class="active">
 <div class="card">
-  <h2>Alta de Socio</h2>
-
-  <input id="id" placeholder="ID (CISS-0001)">
-  <input id="nombre" placeholder="Nombre">
-  <input id="apellido" placeholder="Apellido">
-  <input id="dni" placeholder="DNI">
-
-  <select id="estado">
-    <option value="ACTIVO">ACTIVO</option>
-    <option value="INACTIVO">INACTIVO</option>
-  </select>
-
-  <button onclick="guardar()">Guardar socio</button>
+<h3>Alta de socio</h3>
+<input id="nombre" placeholder="Nombre">
+<input id="apellido" placeholder="Apellido">
+<input id="dni" placeholder="DNI">
+<select id="estado">
+  <option>ACTIVO</option>
+  <option>INACTIVO</option>
+</select>
+<button onclick="guardarSocio()">Guardar</button>
 </div>
+</section>
+
+<section id="socios">
+<div class="card">
+<h3>Socios cargados</h3>
+<div id="listaSocios"></div>
+</div>
+</section>
+
+<section id="stats">
+<iframe src="panel.html" style="width:100%;height:500px;border:none;"></iframe>
+</section>
+
+<section id="log">
+<div class="card">
+<h3>Ingresos administrador</h3>
+<div id="logAdmin"></div>
+</div>
+</section>
 
 <script>
-  if (localStorage.getItem("admin") !== "ok") {
-    window.location.href = "admin.html";
-  }
+if(localStorage.getItem("admin")!=="ok"){
+  location.href="admin.html";
+}
 
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4hZxmRzztYxt29HOjQukQiulZoQE6HaAJIALMp_H1ljOqRRm5pTQXmZQIGUcM2qyk/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbz4hZxmRzztYxt29HOjQukQiulZoQE6HaAJIALMp_H1ljOqRRm5pTQXmZQIGUcM2qyk/exec";
+const SOCIOS_URL="https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+const LOG_URL="https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/LOG_ADMIN";
 
-  function guardar() {
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        tipo: "socio",
-        id: id.value,
-        nombre: nombre.value,
-        apellido: apellido.value,
-        dni: dni.value,
-        estado: estado.value
-      })
-    }).then(() => alert("Socio guardado"));
-  }
+function show(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  if(id==="socios") cargarSocios();
+  if(id==="log") cargarLog();
+}
+
+function logout(){
+  localStorage.removeItem("admin");
+  location.href="admin.html";
+}
+
+function guardarSocio(){
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      tipo:"socio",
+      nombre:nombre.value,
+      apellido:apellido.value,
+      dni:dni.value,
+      estado:estado.value
+    })
+  }).then(()=>alert("Socio cargado"));
+}
+
+function cargarSocios(){
+  fetch(SOCIOS_URL).then(r=>r.json()).then(data=>{
+    listaSocios.innerHTML="";
+    data.forEach(s=>{
+      listaSocios.innerHTML+=`
+      <p>${s.ID} - ${s.Nombre} ${s.Apellido}</p>`;
+    });
+  });
+}
+
+function cargarLog(){
+  fetch(LOG_URL).then(r=>r.json()).then(data=>{
+    logAdmin.innerHTML="";
+    data.forEach(l=>{
+      logAdmin.innerHTML+=`
+      <p>${l.Fecha} ${l.Hora} - ${l.Usuario}</p>`;
+    });
+  });
+}
 </script>
 
 </body>
 </html>
+
