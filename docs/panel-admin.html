@@ -6,38 +6,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body {margin:0;font-family:Arial;background:#f1f5f9;}
+body {
+  margin:0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:#f5f7fb;
+  color:#1f2937;
+}
+
 header {
   background:#0b3c6f;
   color:white;
-  padding:14px;
+  padding:16px 24px;
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
+
 nav button {
-  margin-right:6px;
-  padding:8px 12px;
+  background:rgba(255,255,255,0.15);
   border:none;
-  border-radius:8px;
-  background:#e5e7eb;
+  color:white;
+  padding:8px 14px;
+  border-radius:999px;
+  margin-left:6px;
+  font-size:13px;
+  cursor:pointer;
 }
+
+nav button:hover {
+  background:rgba(255,255,255,0.3);
+}
+
 section {
   display:none;
-  padding:24px;
+  padding:32px;
 }
-section.active {display:block;}
+
+section.active {
+  display:block;
+}
+
 .card {
   background:white;
-  padding:20px;
-  border-radius:20px;
-  max-width:500px;
+  max-width:520px;
+  margin:auto;
+  padding:28px;
+  border-radius:24px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.08);
 }
-input,select,button {
+
+h3 {
+  margin-top:0;
+  color:#0b3c6f;
+}
+
+input, select, button.action {
   width:100%;
-  margin-top:10px;
-  padding:10px;
-  border-radius:10px;
+  padding:12px;
+  margin-top:12px;
+  border-radius:14px;
+  border:1px solid #d1d5db;
+  font-size:14px;
+}
+
+button.action {
+  background:#0b3c6f;
+  color:white;
+  border:none;
+  margin-top:16px;
+}
+
+.list {
+  font-size:14px;
+  line-height:1.6;
 }
 </style>
 </head>
@@ -47,96 +88,94 @@ input,select,button {
 <header>
   <strong>Panel Administrador</strong>
   <nav>
-    <button onclick="show('alta')">Alta socio</button>
+    <button onclick="show('alta')">Alta</button>
     <button onclick="show('socios')">Socios</button>
     <button onclick="show('stats')">Estadísticas</button>
     <button onclick="show('log')">Ingresos</button>
-    <button onclick="logout()">Cerrar sesión</button>
+    <button onclick="logout()">Salir</button>
   </nav>
 </header>
 
 <section id="alta" class="active">
-<div class="card">
-<h3>Alta de socio</h3>
-<input id="nombre" placeholder="Nombre">
-<input id="apellido" placeholder="Apellido">
-<input id="dni" placeholder="DNI">
-<select id="estado">
-  <option>ACTIVO</option>
-  <option>INACTIVO</option>
-</select>
-<button onclick="guardarSocio()">Guardar</button>
-</div>
+  <div class="card">
+    <h3>Alta de socio</h3>
+    <input id="nombre" placeholder="Nombre">
+    <input id="apellido" placeholder="Apellido">
+    <input id="dni" placeholder="DNI">
+    <select id="estado">
+      <option>ACTIVO</option>
+      <option>INACTIVO</option>
+    </select>
+    <button class="action" onclick="guardarSocio()">Guardar socio</button>
+  </div>
 </section>
 
 <section id="socios">
-<div class="card">
-<h3>Socios cargados</h3>
-<div id="listaSocios"></div>
-</div>
+  <div class="card">
+    <h3>Socios cargados</h3>
+    <div id="listaSocios" class="list"></div>
+  </div>
 </section>
 
 <section id="stats">
-<iframe src="panel.html" style="width:100%;height:500px;border:none;"></iframe>
+  <iframe src="panel.html" style="width:100%;height:520px;border:none;"></iframe>
 </section>
 
 <section id="log">
-<div class="card">
-<h3>Ingresos administrador</h3>
-<div id="logAdmin"></div>
-</div>
+  <div class="card">
+    <h3>Ingresos de administrador</h3>
+    <div id="logAdmin" class="list"></div>
+  </div>
 </section>
 
 <script>
-if(localStorage.getItem("admin")!=="ok"){
-  location.href="admin.html";
+if (localStorage.getItem("admin") !== "ok") {
+  location.href = "admin.html";
 }
 
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbz4hZxmRzztYxt29HOjQukQiulZoQE6HaAJIALMp_H1ljOqRRm5pTQXmZQIGUcM2qyk/exec";
-const SOCIOS_URL="https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
-const LOG_URL="https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/LOG_ADMIN";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4hZxmRzztYxt29HOjQukQiulZoQE6HaAJIALMp_H1ljOqRRm5pTQXmZQIGUcM2qyk/exec";
+const SOCIOS_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+const LOG_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/LOG_ADMIN";
 
-function show(id){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+function show(id) {
+  document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  if(id==="socios") cargarSocios();
-  if(id==="log") cargarLog();
+  if (id === "socios") cargarSocios();
+  if (id === "log") cargarLog();
 }
 
-function logout(){
+function logout() {
   localStorage.removeItem("admin");
-  location.href="admin.html";
+  location.href = "admin.html";
 }
 
-function guardarSocio(){
-  fetch(SCRIPT_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      tipo:"socio",
-      nombre:nombre.value,
-      apellido:apellido.value,
-      dni:dni.value,
-      estado:estado.value
+function guardarSocio() {
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      tipo: "socio",
+      nombre: nombre.value,
+      apellido: apellido.value,
+      dni: dni.value,
+      estado: estado.value
     })
-  }).then(()=>alert("Socio cargado"));
+  }).then(() => alert("Socio cargado correctamente"));
 }
 
-function cargarSocios(){
-  fetch(SOCIOS_URL).then(r=>r.json()).then(data=>{
-    listaSocios.innerHTML="";
-    data.forEach(s=>{
-      listaSocios.innerHTML+=`
-      <p>${s.ID} - ${s.Nombre} ${s.Apellido}</p>`;
+function cargarSocios() {
+  fetch(SOCIOS_URL).then(r => r.json()).then(data => {
+    listaSocios.innerHTML = "";
+    data.forEach(s => {
+      listaSocios.innerHTML += `<div>${s.ID} – ${s.Nombre} ${s.Apellido}</div>`;
     });
   });
 }
 
-function cargarLog(){
-  fetch(LOG_URL).then(r=>r.json()).then(data=>{
-    logAdmin.innerHTML="";
-    data.forEach(l=>{
-      logAdmin.innerHTML+=`
-      <p>${l.Fecha} ${l.Hora} - ${l.Usuario}</p>`;
+function cargarLog() {
+  fetch(LOG_URL).then(r => r.json()).then(data => {
+    logAdmin.innerHTML = "";
+    data.reverse().forEach(l => {
+      logAdmin.innerHTML += `<div>${l.Fecha} ${l.Hora} — ${l.Usuario}</div>`;
     });
   });
 }
@@ -144,4 +183,3 @@ function cargarLog(){
 
 </body>
 </html>
-
