@@ -1,49 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Acceso Administrador</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Login Administrador</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      background: linear-gradient(135deg, #0b3c6f, #092a4a);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Arial, sans-serif;
-    }
-
-    .login {
-      background: white;
-      padding: 32px;
-      border-radius: 24px;
-      width: 100%;
-      max-width: 360px;
-      text-align: center;
-    }
-
-    input, button {
-      width: 100%;
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      background: #0b3c6f;
-      color: white;
-      border: none;
-      font-size: 15px;
-    }
-  </style>
+<style>
+body {
+  background: linear-gradient(135deg,#0b3c6f,#092a4a);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:Arial;
+}
+.card {
+  background:white;
+  padding:30px;
+  border-radius:24px;
+  width:320px;
+  text-align:center;
+}
+input,button {
+  width:100%;
+  margin-top:12px;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ccc;
+}
+button {
+  background:#0b3c6f;
+  color:white;
+  border:none;
+}
+</style>
 </head>
 
 <body>
-
-<div class="login">
+<div class="card">
   <h2>Administrador</h2>
   <input id="user" placeholder="Usuario">
   <input id="pass" type="password" placeholder="Contraseña">
@@ -51,18 +45,26 @@
 </div>
 
 <script>
-  function login() {
-    const u = user.value;
-    const p = pass.value;
+const SCRIPT_URL = "PEGÁ_TU_URL_APPS_SCRIPT";
 
-    if (u === "admin" && p === "ciss2026") {
-      localStorage.setItem("admin", "ok");
-      window.location.href = "panel-admin.html";
-    } else {
-      alert("Usuario o contraseña incorrectos");
-    }
+function login() {
+  if (user.value === "admin" && pass.value === "ciss2026") {
+    localStorage.setItem("admin","ok");
+
+    fetch(SCRIPT_URL,{
+      method:"POST",
+      body:JSON.stringify({
+        tipo:"login",
+        usuario:user.value
+      })
+    });
+
+    location.href="panel-admin.html";
+  } else {
+    alert("Datos incorrectos");
   }
+}
 </script>
-
 </body>
 </html>
+
