@@ -2,370 +2,283 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Panel Administrador</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel Administrativo</title>
 
 <style>
-:root{
-  --azul:#0b3c6f;
-  --azul-osc:#082f54;
-  --azul-claro:#0f4c8c;
-  --gris:#f4f6f9;
-}
+* { box-sizing: border-box; font-family: Arial, sans-serif; }
 
-*{
-  box-sizing:border-box;
-  font-family:"Segoe UI",Arial,sans-serif;
-}
-
-body{
-  margin:0;
-  display:flex;
-  height:100vh;
-  background:var(--gris);
+body {
+  margin: 0;
+  background: #f4f7fb;
+  display: flex;
+  height: 100vh;
 }
 
 /* ===== SIDEBAR ===== */
-.sidebar{
-  width:240px;
-  background:linear-gradient(180deg,var(--azul),var(--azul-osc));
-  padding:22px 18px;
-  display:flex;
-  flex-direction:column;
-  box-shadow:4px 0 24px rgba(0,0,0,.25);
+.sidebar {
+  width: 240px;
+  background: linear-gradient(180deg,#0b3c6f,#082f54);
+  padding: 24px 18px;
+  color: white;
+  display: flex;
+  flex-direction: column;
 }
 
-.logo-box{
-  background:rgba(255,255,255,.2);
-  padding:18px;
-  border-radius:20px;
-  margin-bottom:24px;
+.logo-box {
+  background: rgba(255,255,255,0.15);
+  padding: 16px;
+  border-radius: 18px;
+  margin-bottom: 25px;
 }
 
-.logo-admin{
-  width:100%;
-  max-width:160px;
-  display:block;
-  margin:0 auto;
+.logo-box img {
+  width: 100%;
+  max-width: 160px;
+  display: block;
+  margin: auto;
 }
 
-.sidebar h2{
-  text-align:center;
-  font-size:15px;
-  color:#fff;
-  margin-bottom:20px;
+.sidebar h2 {
+  text-align: center;
+  font-size: 15px;
+  margin-bottom: 20px;
 }
 
-nav{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
+.menu-btn {
+  background: transparent;
+  border: none;
+  color: #e5edff;
+  padding: 12px 16px;
+  text-align: left;
+  border-radius: 14px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: 0.25s;
 }
 
-.menu-btn{
-  background:transparent;
-  border:none;
-  color:#e5edff;
-  padding:12px 16px;
-  border-radius:14px;
-  font-size:14px;
-  text-align:left;
-  cursor:pointer;
-  transition:.25s ease;
-}
-
-.menu-btn:hover{
-  background:rgba(255,255,255,.15);
-  transform:translateX(4px);
-}
-
-.menu-btn.active{
-  background:#fff;
-  color:var(--azul);
-  font-weight:600;
-}
-
-.menu-btn.logout{
-  margin-top:auto;
-  color:#fecaca;
+.menu-btn:hover { background: rgba(255,255,255,0.12); transform: translateX(4px); }
+.menu-btn.active {
+  background: white;
+  color: #0b3c6f;
+  font-weight: bold;
 }
 
 /* ===== MAIN ===== */
-main{
-  flex:1;
-  padding:32px;
-  overflow-y:auto;
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
 }
 
-section{display:none;}
-section.active{display:block;}
+.section { display: none; }
+.section.active { display: block; }
 
-.card{
-  background:#fff;
-  padding:28px;
-  border-radius:28px;
-  box-shadow:0 18px 40px rgba(0,0,0,.12);
-  max-width:1100px;
+/* ===== CARDS ===== */
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
 }
 
-h3{
-  margin-top:0;
-  color:var(--azul);
+input, button {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  margin: 5px 0;
+}
+
+button.primary {
+  background: #0b3c6f;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 
 /* ===== SOCIOS ===== */
-.socios-container{
-  background:linear-gradient(135deg,var(--azul),var(--azul-claro));
-  padding:32px;
-  border-radius:28px;
+.socio {
+  padding: 15px;
+  border-radius: 14px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-  gap:24px;
+.socio:hover { background: #f0f5ff; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
 }
 
-.socio{
-  background:#fff;
-  padding:22px;
-  border-radius:22px;
-  text-align:center;
-  cursor:pointer;
-  box-shadow:0 16px 32px rgba(0,0,0,.15);
-  transition:.25s;
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
 }
 
-.socio:hover{
-  transform:translateY(-4px);
-}
-
-.socio strong{
-  display:block;
-  font-size:14px;
-  color:var(--azul);
-  margin-bottom:10px;
-}
-
-.socio img{
-  width:130px;
-  margin:10px 0;
-}
-
-.estado{
-  font-size:13px;
-  font-weight:600;
-}
-
-.activo{color:#15803d;}
-.inactivo{color:#b91c1c;}
-
-.vence{
-  font-size:12px;
-  color:#6b7280;
-}
-
-/* ===== MODAL ===== */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:1000;
-}
-
-.modal.active{display:flex;}
-
-.modal-card{
-  background:#fff;
-  padding:32px;
-  border-radius:28px;
-  text-align:center;
-  position:relative;
-  animation:zoom .25s ease;
-}
-
-@keyframes zoom{
-  from{transform:scale(.9);opacity:0}
-  to{transform:scale(1);opacity:1}
-}
-
-.modal-card img{
-  width:240px;
-  margin:14px 0;
-}
-
-.close{
-  position:absolute;
-  top:14px;
-  right:18px;
-  font-size:22px;
-  background:none;
-  border:none;
-  cursor:pointer;
+.close {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  cursor: pointer;
+  font-size: 20px;
 }
 
 /* ===== STATS ===== */
-.stats{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:24px;
+.stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
 }
-
-.stat{
-  background:#fff;
-  padding:26px;
-  border-radius:24px;
-  box-shadow:0 14px 32px rgba(0,0,0,.12);
-  text-align:center;
-}
-
-.stat strong{
-  display:block;
-  font-size:28px;
-  color:var(--azul);
-}
-
-.stat span{
-  font-size:14px;
-  color:#6b7280;
+.rank-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="logo-box">
-    <img src="logo.png" class="logo-admin">
+    <img src="logo.png">
   </div>
-
   <h2>Panel Admin</h2>
-
-  <nav>
-    <button class="menu-btn active" onclick="activate(this);show('socios')">Socios</button>
-    <button class="menu-btn" onclick="activate(this);show('stats')">Estadísticas</button>
-    <button class="menu-btn logout" onclick="logout()">Cerrar sesión</button>
-  </nav>
+  <button class="menu-btn active" onclick="show('alta',this)">Alta Socio</button>
+  <button class="menu-btn" onclick="show('socios',this)">Socios</button>
+  <button class="menu-btn" onclick="show('stats',this)">Estadísticas</button>
 </aside>
 
-<main>
+<!-- MAIN -->
+<div class="main">
 
-<section id="socios" class="active">
-  <div class="socios-container">
-    <div class="grid" id="listaSocios"></div>
-  </div>
-</section>
-
-<section id="stats">
+<!-- ALTA -->
+<div id="alta" class="section active">
   <div class="card">
-    <h3>Estadísticas de Socios</h3>
-    <div class="stats">
-      <div class="stat">
-        <strong id="tTotal">0</strong>
-        <span>Total de socios</span>
-      </div>
-      <div class="stat">
-        <strong id="tActivos">0</strong>
-        <span>Socios activos</span>
-      </div>
-      <div class="stat">
-        <strong id="tInactivos">0</strong>
-        <span>Socios inactivos</span>
-      </div>
-      <div class="stat">
-        <strong id="tPorcentaje">0%</strong>
-        <span>% de socios activos</span>
-      </div>
-    </div>
+    <h3>Alta de socio</h3>
+    <input id="nombre" placeholder="Nombre"><br>
+    <input id="apellido" placeholder="Apellido"><br>
+    <input id="dni" placeholder="DNI"><br>
+    <input id="vence" type="date"><br>
+    <button class="primary" onclick="altaSocio()">Guardar</button>
   </div>
-</section>
+</div>
 
-</main>
+<!-- SOCIOS -->
+<div id="socios" class="section">
+  <div class="card">
+    <h3>Socios cargados</h3>
+    <div id="listaSocios"></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div id="stats" class="section">
+  <div class="card">
+    <h3>Estadísticas de socios</h3>
+    <div class="stat"><span>Total</span><strong id="tTotal"></strong></div>
+    <div class="stat"><span>Activos</span><strong id="tActivos"></strong></div>
+    <div class="stat"><span>Inactivos</span><strong id="tInactivos"></strong></div>
+  </div>
+
+  <div class="card">
+    <h3>Comercios más usados</h3>
+    <div id="rankingComercios"></div>
+  </div>
+</div>
+
+</div>
 
 <!-- MODAL -->
-<div class="modal" id="modal" onclick="cerrarModal(event)">
-  <div class="modal-card" onclick="event.stopPropagation()">
-    <button class="close" onclick="cerrarModal()">✕</button>
-    <h3 id="mNombre"></h3>
-    <img id="mQR">
-    <div id="mEstado" class="estado"></div>
-    <div id="mVence" class="vence"></div>
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <div class="close" onclick="cerrar()">✖</div>
+    <div id="detalle"></div>
   </div>
 </div>
 
 <script>
-if(localStorage.getItem("admin")!=="ok"){
-  location.href="admin.html";
-}
+const SOCIOS_URL = "https://script.google.com/macros/s/AKfycbzFHxqF0GXCgieLEtBslAtxdUvMLUScy_3ptj2SQ0ovQ1rsUD-1Mbh8Kpkz3GgAILIU/exec";
+const REGISTRO_URL = "https://script.google.com/macros/s/AKfycbwoOOwECfYTHWG319-VZhofCU1CeHEKkocTIPkc_2B3bISL8oiKxhM50ACWiJh0jHeW/exec";
 
-const SOCIOS_URL =
-"https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
-
-function activate(btn){
-  document.querySelectorAll(".menu-btn").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-}
-
-function show(id){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+/* MENU */
+function show(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.menu-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
   if(id==="socios") cargarSocios();
   if(id==="stats") cargarStats();
 }
 
-function logout(){
-  localStorage.removeItem("admin");
-  location.href="admin.html";
+/* ALTA */
+function altaSocio(){
+  alert("Alta vía Apps Script (ya lo tenés funcionando)");
 }
 
+/* SOCIOS */
 function cargarSocios(){
   fetch(SOCIOS_URL).then(r=>r.json()).then(data=>{
     listaSocios.innerHTML="";
     data.forEach(s=>{
       listaSocios.innerHTML+=`
-        <div class="socio" onclick='abrirModal(${JSON.stringify(s)})'>
-          <strong>${s.Nombre} ${s.Apellido}</strong>
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${s.ID}">
-          <div class="estado ${s.Estado==="ACTIVO"?"activo":"inactivo"}">${s.Estado}</div>
-          <div class="vence">Vence: ${s.VENCE||"-"}</div>
+        <div class="socio" onclick='ver(${JSON.stringify(s)})'>
+          ${s.Nombre} ${s.Apellido} – ${s.Estado}
         </div>`;
     });
   });
 }
 
+function ver(s){
+  detalle.innerHTML=`
+    <h3>${s.Nombre} ${s.Apellido}</h3>
+    <p>DNI: ${s.DNI}</p>
+    <p>Estado: <strong>${s.Estado}</strong></p>
+    <p>Vence: ${s.VENCE}</p>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${s.ID}">
+  `;
+  modal.style.display="flex";
+}
+
+function cerrar(){ modal.style.display="none"; }
+
+/* STATS */
 function cargarStats(){
   fetch(SOCIOS_URL).then(r=>r.json()).then(data=>{
-    const total=data.length;
-    const activos=data.filter(s=>s.Estado==="ACTIVO").length;
-    const inactivos=total-activos;
-
-    tTotal.textContent=total;
-    tActivos.textContent=activos;
-    tInactivos.textContent=inactivos;
-    tPorcentaje.textContent=total?Math.round(activos*100/total)+"%":"0%";
+    tTotal.textContent=data.length;
+    tActivos.textContent=data.filter(s=>s.Estado==="ACTIVO").length;
+    tInactivos.textContent=data.filter(s=>s.Estado!=="ACTIVO").length;
   });
-}
 
-function abrirModal(s){
-  mNombre.textContent=s.Nombre+" "+s.Apellido;
-  mQR.src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="+s.ID;
-  mEstado.textContent=s.Estado;
-  mEstado.className="estado "+(s.Estado==="ACTIVO"?"activo":"inactivo");
-  mVence.textContent="Vence: "+(s.VENCE||"-");
-  modal.classList.add("active");
-}
-
-function cerrarModal(){
-  modal.classList.remove("active");
+  fetch(REGISTRO_URL).then(r=>r.json()).then(rows=>{
+    const c={};
+    rows.forEach(r=>{
+      if(r.Comercio) c[r.Comercio]=(c[r.Comercio]||0)+1;
+    });
+    rankingComercios.innerHTML="";
+    Object.entries(c).sort((a,b)=>b[1]-a[1]).forEach(e=>{
+      rankingComercios.innerHTML+=`
+        <div class="rank-item"><span>${e[0]}</span><strong>${e[1]}</strong></div>`;
+    });
+  });
 }
 </script>
 
 </body>
 </html>
-
 
 </body>
 </html>
