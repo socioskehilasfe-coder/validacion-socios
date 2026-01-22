@@ -36,7 +36,7 @@ body{
 }
 
 .logo-box{
-  background:rgba(255,255,255,.15);
+  background:rgba(255,255,255,.18);
   padding:18px;
   border-radius:20px;
   margin-bottom:24px;
@@ -101,12 +101,6 @@ main{
   flex:1;
   padding:32px;
   overflow-y:auto;
-  animation:fade .3s ease;
-}
-
-@keyframes fade{
-  from{opacity:0;transform:translateY(6px)}
-  to{opacity:1;transform:translateY(0)}
 }
 
 section{display:none;}
@@ -164,6 +158,7 @@ button.action{
   text-align:center;
   box-shadow:0 16px 32px rgba(0,0,0,.15);
   transition:.25s;
+  cursor:pointer;
 }
 
 .socio:hover{
@@ -181,7 +176,6 @@ button.action{
 .socio img{
   width:130px;
   margin:12px 0;
-  border-radius:12px;
 }
 
 .estado{
@@ -196,6 +190,49 @@ button.action{
   font-size:12px;
   color:#6b7280;
 }
+
+/* ===== MODAL SOCIO ===== */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+
+.modal.active{display:flex;}
+
+.modal-card{
+  background:#fff;
+  padding:32px;
+  border-radius:28px;
+  text-align:center;
+  max-width:380px;
+  width:90%;
+  animation:zoom .25s ease;
+}
+
+@keyframes zoom{
+  from{transform:scale(.9);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+.modal-card img{
+  width:220px;
+  margin:16px 0;
+}
+
+.close{
+  background:none;
+  border:none;
+  font-size:22px;
+  position:absolute;
+  top:18px;
+  right:24px;
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -203,7 +240,7 @@ button.action{
 
 <aside class="sidebar">
   <div class="logo-box">
-    <img src="logo.png" class="logo-admin" alt="Comunidad Israelita de Santa Fe">
+    <img src="logo.png" class="logo-admin">
   </div>
 
   <h2>Panel Admin</h2>
@@ -211,8 +248,6 @@ button.action{
   <nav>
     <button class="menu-btn active" onclick="activate(this);show('alta')">Alta socio</button>
     <button class="menu-btn" onclick="activate(this);show('socios')">Socios</button>
-    <button class="menu-btn" onclick="activate(this);show('stats')">Estadísticas</button>
-    <button class="menu-btn" onclick="activate(this);show('log')">Ingresos admin</button>
     <button class="menu-btn logout" onclick="logout()">Cerrar sesión</button>
   </nav>
 </aside>
@@ -239,18 +274,18 @@ button.action{
   </div>
 </section>
 
-<section id="stats">
-  <iframe src="panel.html" style="width:100%;height:600px;border:none;"></iframe>
-</section>
-
-<section id="log">
-  <div class="card">
-    <h3>Ingresos administrador</h3>
-    <div id="logAdmin"></div>
-  </div>
-</section>
-
 </main>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <button class="close" onclick="cerrarModal()">×</button>
+    <h3 id="mNombre"></h3>
+    <img id="mQR">
+    <div id="mEstado" class="estado"></div>
+    <div class="vence" id="mVence"></div>
+  </div>
+</div>
 
 <script>
 if(localStorage.getItem("admin")!=="ok"){
@@ -259,7 +294,6 @@ if(localStorage.getItem("admin")!=="ok"){
 
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxmxKW80Lcrhe2FLrw5BOYsNEf6f2XHA91JD9nuY7NWyr2rEYsvmjVwp0FFw384umi2/exec";
 const SOCIOS_URL="https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
-const LOG_URL="https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/LOG_ADMIN";
 
 function activate(btn){
   document.querySelectorAll(".menu-btn").forEach(b=>b.classList.remove("active"));
@@ -270,7 +304,6 @@ function show(id){
   document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   if(id==="socios") cargarSocios();
-  if(id==="log") cargarLog();
 }
 
 function logout(){
@@ -296,24 +329,33 @@ function cargarSocios(){
     listaSocios.innerHTML="";
     data.forEach(s=>{
       listaSocios.innerHTML+=`
-        <div class="socio">
+        <div class="socio" onclick='abrirModal(${JSON.stringify(s)})'>
           <strong>${s.Nombre} ${s.Apellido}</strong>
           <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://socioskehilasfe-coder.github.io/validacion-socios/socio.html?id=${s.ID}">
-          <div class="estado ${s.Estado==='ACTIVO'?'activo':'inactivo'}">${s.Estado}</div>
-          <div class="vence">Vence: ${s.VENCE||'-'}</div>
+          <div class="estado ${s.Estado==="ACTIVO"?"activo":"inactivo"}">${s.Estado}</div>
+          <div class="vence">Vence: ${s.VENCE||"-"}</div>
         </div>`;
     });
   });
 }
 
-function cargarLog(){
-  fetch(LOG_URL).then(r=>r.json()).then(data=>{
-    logAdmin.innerHTML="";
-    data.reverse().forEach(l=>{
-      logAdmin.innerHTML+=`<div>${l.Fecha} ${l.Hora} — ${l.Usuario}</div>`;
-    });
-  });
+function abrirModal(s){
+  mNombre.textContent = s.Nombre+" "+s.Apellido;
+  mQR.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://socioskehilasfe-coder.github.io/validacion-socios/socio.html?id="+s.ID;
+  mEstado.textContent = s.Estado;
+  mEstado.className = "estado "+(s.Estado==="ACTIVO"?"activo":"inactivo");
+  mVence.textContent = "Vence: "+(s.VENCE||"-");
+  modal.classList.add("active");
 }
+
+function cerrarModal(){
+  modal.classList.remove("active");
+}
+</script>
+
+</body>
+</html>
+
 </script>
 
 </body>
