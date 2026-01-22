@@ -8,6 +8,7 @@
 <style>
 :root {
   --azul: #0b3c6f;
+  --azul-claro: #0f4c8c;
   --gris: #f4f6f9;
   --texto: #1f2937;
 }
@@ -20,35 +21,40 @@
 body {
   margin: 0;
   background: var(--gris);
-  color: var(--texto);
   display: flex;
   height: 100vh;
 }
 
 /* SIDEBAR */
 aside {
-  width: 220px;
-  background: var(--azul);
+  width: 230px;
+  background: linear-gradient(180deg, var(--azul), var(--azul-claro));
   color: white;
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
-  transition: width 0.3s ease;
+}
+
+.logo-admin {
+  width: 140px;
+  margin: 0 auto 24px;
+  display: block;
 }
 
 aside h2 {
-  font-size: 16px;
-  margin-bottom: 32px;
+  font-size: 15px;
+  margin-bottom: 28px;
   font-weight: 600;
+  text-align: center;
 }
 
 aside button {
   background: transparent;
   border: none;
   color: white;
-  padding: 10px 12px;
+  padding: 12px 14px;
   text-align: left;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 14px;
   cursor: pointer;
   margin-bottom: 6px;
@@ -59,7 +65,7 @@ aside button:hover {
   background: rgba(255,255,255,0.15);
 }
 
-/* CONTENIDO */
+/* MAIN */
 main {
   flex: 1;
   padding: 32px;
@@ -72,20 +78,15 @@ main {
   to {opacity:1; transform:translateY(0);}
 }
 
-section {
-  display: none;
-}
-
-section.active {
-  display: block;
-}
+section { display: none; }
+section.active { display: block; }
 
 .card {
   background: white;
   padding: 28px;
-  border-radius: 24px;
-  max-width: 900px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  border-radius: 28px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.1);
+  max-width: 1100px;
 }
 
 h3 {
@@ -113,28 +114,26 @@ button.action {
   cursor: pointer;
 }
 
-/* CONTENEDOR SOCIOS */
+/* SOCIOS */
 .socios-container {
-  background: linear-gradient(135deg, #0b3c6f, #0f4c8c);
+  background: linear-gradient(135deg, var(--azul), var(--azul-claro));
   padding: 32px;
   border-radius: 28px;
 }
 
-/* GRID */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
   gap: 24px;
 }
 
-/* TARJETA SOCIO */
 .socio {
   background: white;
-  padding: 22px 20px;
+  padding: 22px;
   border-radius: 22px;
   text-align: center;
   box-shadow: 0 16px 32px rgba(0,0,0,0.12);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform .25s, box-shadow .25s;
 }
 
 .socio:hover {
@@ -142,42 +141,30 @@ button.action {
   box-shadow: 0 22px 44px rgba(0,0,0,0.18);
 }
 
-/* NOMBRE */
 .socio strong {
   display: block;
   font-size: 14px;
   margin-bottom: 10px;
-  color: #0b3c6f;
-  letter-spacing: 0.5px;
+  color: var(--azul);
 }
 
-/* QR */
 .socio img {
   width: 130px;
   margin: 12px 0;
   border-radius: 12px;
 }
 
-/* ESTADO */
 .estado {
-  font-size: 13px;
   font-weight: 600;
-  margin-top: 6px;
+  font-size: 13px;
 }
 
-.activo {
-  color: #15803d;
-}
+.activo { color: #15803d; }
+.inactivo { color: #b91c1c; }
 
-.inactivo {
-  color: #b91c1c;
-}
-
-/* VENCIMIENTO */
 .vence {
   font-size: 12px;
   color: #6b7280;
-  margin-top: 4px;
 }
 </style>
 </head>
@@ -185,6 +172,7 @@ button.action {
 <body>
 
 <aside>
+  <img src="logo.png" class="logo-admin">
   <h2>Panel Admin</h2>
   <button onclick="show('alta')">Alta socio</button>
   <button onclick="show('socios')">Socios</button>
@@ -210,8 +198,7 @@ button.action {
 </section>
 
 <section id="socios">
-  <div class="card">
-    <h3>Socios cargados</h3>
+  <div class="socios-container">
     <div class="grid" id="listaSocios"></div>
   </div>
 </section>
@@ -238,58 +225,59 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmxKW80Lcrhe2FLrw5B
 const SOCIOS_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
 const LOG_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/LOG_ADMIN";
 
-function show(id) {
-  document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+function show(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  if (id === "socios") cargarSocios();
-  if (id === "log") cargarLog();
+  if(id==="socios") cargarSocios();
+  if(id==="log") cargarLog();
 }
 
-function logout() {
+function logout(){
   localStorage.removeItem("admin");
-  location.href = "admin.html";
+  location.href="admin.html";
 }
 
-function guardarSocio() {
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      tipo: "socio",
-      nombre: nombre.value,
-      apellido: apellido.value,
-      dni: dni.value,
-      estado: estado.value
+function guardarSocio(){
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      tipo:"socio",
+      nombre:nombre.value,
+      apellido:apellido.value,
+      dni:dni.value,
+      estado:estado.value
     })
-  }).then(() => alert("Socio cargado"));
+  }).then(()=>alert("Socio cargado"));
 }
 
-function cargarSocios() {
-  fetch(SOCIOS_URL).then(r => r.json()).then(data => {
-    listaSocios.innerHTML = "";
-    data.forEach(s => {
-      listaSocios.innerHTML += `
+function cargarSocios(){
+  fetch(SOCIOS_URL).then(r=>r.json()).then(data=>{
+    listaSocios.innerHTML="";
+    data.forEach(s=>{
+      listaSocios.innerHTML+=`
         <div class="socio">
-          <strong>${s.Nombre} ${s.Apellido}</strong><br>
-          <span class="estado ${s.Estado === "ACTIVO" ? "activo" : "inactivo"}">
-            ${s.Estado}
-          </span>
+          <strong>${s.Nombre} ${s.Apellido}</strong>
           <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://socioskehilasfe-coder.github.io/validacion-socios/socio.html?id=${s.ID}">
-          <div class="vence">Vence: ${s.VENCE || "—"}</div>
-        </div>
-      `;
+          <div class="estado ${s.Estado==='ACTIVO'?'activo':'inactivo'}">${s.Estado}</div>
+          <div class="vence">Vence: ${s.VENCE||'-'}</div>
+        </div>`;
     });
   });
 }
 
-function cargarLog() {
-  fetch(LOG_URL).then(r => r.json()).then(data => {
-    logAdmin.innerHTML = "";
-    data.reverse().forEach(l => {
-      logAdmin.innerHTML += `<div>${l.Fecha} ${l.Hora} — ${l.Usuario}</div>`;
+function cargarLog(){
+  fetch(LOG_URL).then(r=>r.json()).then(data=>{
+    logAdmin.innerHTML="";
+    data.reverse().forEach(l=>{
+      logAdmin.innerHTML+=`<div>${l.Fecha} ${l.Hora} — ${l.Usuario}</div>`;
     });
   });
 }
 </script>
+
+</body>
+</html>
+
 
 </body>
 </html>
