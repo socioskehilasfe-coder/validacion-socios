@@ -54,7 +54,6 @@ body{
   font-size:15px;
   color:#fff;
   margin-bottom:20px;
-  font-weight:600;
 }
 
 nav{
@@ -84,7 +83,6 @@ nav{
   background:#fff;
   color:var(--azul);
   font-weight:600;
-  box-shadow:0 6px 18px rgba(0,0,0,.25);
 }
 
 .menu-btn.logout{
@@ -115,25 +113,6 @@ h3{
   color:var(--azul);
 }
 
-/* ===== FORM ===== */
-input,select{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid #d1d5db;
-  margin-top:12px;
-}
-
-button.action{
-  margin-top:16px;
-  padding:12px;
-  border-radius:14px;
-  border:none;
-  background:var(--azul);
-  color:#fff;
-  cursor:pointer;
-}
-
 /* ===== SOCIOS ===== */
 .socios-container{
   background:linear-gradient(135deg,var(--azul),var(--azul-claro));
@@ -152,9 +131,9 @@ button.action{
   padding:22px;
   border-radius:22px;
   text-align:center;
+  cursor:pointer;
   box-shadow:0 16px 32px rgba(0,0,0,.15);
   transition:.25s;
-  cursor:pointer;
 }
 
 .socio:hover{
@@ -170,13 +149,21 @@ button.action{
 
 .socio img{
   width:130px;
+  margin:10px 0;
 }
 
-.estado{font-weight:600;}
+.estado{
+  font-size:13px;
+  font-weight:600;
+}
+
 .activo{color:#15803d;}
 .inactivo{color:#b91c1c;}
 
-.vence{font-size:12px;color:#6b7280;}
+.vence{
+  font-size:12px;
+  color:#6b7280;
+}
 
 /* ===== MODAL ===== */
 .modal{
@@ -184,8 +171,8 @@ button.action{
   inset:0;
   background:rgba(0,0,0,.6);
   display:none;
-  align-items:center;
   justify-content:center;
+  align-items:center;
   z-index:1000;
 }
 
@@ -196,8 +183,6 @@ button.action{
   padding:32px;
   border-radius:28px;
   text-align:center;
-  max-width:380px;
-  width:90%;
   position:relative;
   animation:zoom .25s ease;
 }
@@ -209,6 +194,7 @@ button.action{
 
 .modal-card img{
   width:240px;
+  margin:14px 0;
 }
 
 .close{
@@ -259,8 +245,7 @@ button.action{
   <h2>Panel Admin</h2>
 
   <nav>
-    <button class="menu-btn active" onclick="activate(this);show('alta')">Alta socio</button>
-    <button class="menu-btn" onclick="activate(this);show('socios')">Socios</button>
+    <button class="menu-btn active" onclick="activate(this);show('socios')">Socios</button>
     <button class="menu-btn" onclick="activate(this);show('stats')">Estadísticas</button>
     <button class="menu-btn logout" onclick="logout()">Cerrar sesión</button>
   </nav>
@@ -268,21 +253,7 @@ button.action{
 
 <main>
 
-<section id="alta" class="active">
-  <div class="card">
-    <h3>Alta de socio</h3>
-    <input id="nombre" placeholder="Nombre">
-    <input id="apellido" placeholder="Apellido">
-    <input id="dni" placeholder="DNI">
-    <select id="estado">
-      <option>ACTIVO</option>
-      <option>INACTIVO</option>
-    </select>
-    <button class="action" onclick="guardarSocio()">Guardar socio</button>
-  </div>
-</section>
-
-<section id="socios">
+<section id="socios" class="active">
   <div class="socios-container">
     <div class="grid" id="listaSocios"></div>
   </div>
@@ -290,12 +261,24 @@ button.action{
 
 <section id="stats">
   <div class="card">
-    <h3>Estadísticas</h3>
+    <h3>Estadísticas de Socios</h3>
     <div class="stats">
-      <div class="stat"><strong id="tTotal">0</strong><span>Total socios</span></div>
-      <div class="stat"><strong id="tActivos">0</strong><span>Activos</span></div>
-      <div class="stat"><strong id="tInactivos">0</strong><span>Inactivos</span></div>
-      <div class="stat"><strong id="tPorcentaje">0%</strong><span>% Activos</span></div>
+      <div class="stat">
+        <strong id="tTotal">0</strong>
+        <span>Total de socios</span>
+      </div>
+      <div class="stat">
+        <strong id="tActivos">0</strong>
+        <span>Socios activos</span>
+      </div>
+      <div class="stat">
+        <strong id="tInactivos">0</strong>
+        <span>Socios inactivos</span>
+      </div>
+      <div class="stat">
+        <strong id="tPorcentaje">0%</strong>
+        <span>% de socios activos</span>
+      </div>
     </div>
   </div>
 </section>
@@ -309,7 +292,7 @@ button.action{
     <h3 id="mNombre"></h3>
     <img id="mQR">
     <div id="mEstado" class="estado"></div>
-    <div class="vence" id="mVence"></div>
+    <div id="mVence" class="vence"></div>
   </div>
 </div>
 
@@ -318,7 +301,8 @@ if(localStorage.getItem("admin")!=="ok"){
   location.href="admin.html";
 }
 
-const SOCIOS_URL="https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+const SOCIOS_URL =
+"https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
 
 function activate(btn){
   document.querySelectorAll(".menu-btn").forEach(b=>b.classList.remove("active"));
@@ -342,12 +326,12 @@ function cargarSocios(){
     listaSocios.innerHTML="";
     data.forEach(s=>{
       listaSocios.innerHTML+=`
-      <div class="socio" onclick='abrirModal(${JSON.stringify(s)})'>
-        <strong>${s.Nombre} ${s.Apellido}</strong>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${s.ID}">
-        <div class="estado ${s.Estado==="ACTIVO"?"activo":"inactivo"}">${s.Estado}</div>
-        <div class="vence">Vence: ${s.VENCE||"-"}</div>
-      </div>`;
+        <div class="socio" onclick='abrirModal(${JSON.stringify(s)})'>
+          <strong>${s.Nombre} ${s.Apellido}</strong>
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${s.ID}">
+          <div class="estado ${s.Estado==="ACTIVO"?"activo":"inactivo"}">${s.Estado}</div>
+          <div class="vence">Vence: ${s.VENCE||"-"}</div>
+        </div>`;
     });
   });
 }
@@ -356,9 +340,11 @@ function cargarStats(){
   fetch(SOCIOS_URL).then(r=>r.json()).then(data=>{
     const total=data.length;
     const activos=data.filter(s=>s.Estado==="ACTIVO").length;
+    const inactivos=total-activos;
+
     tTotal.textContent=total;
     tActivos.textContent=activos;
-    tInactivos.textContent=total-activos;
+    tInactivos.textContent=inactivos;
     tPorcentaje.textContent=total?Math.round(activos*100/total)+"%":"0%";
   });
 }
@@ -380,7 +366,6 @@ function cerrarModal(){
 </body>
 </html>
 
-</script>
 
 </body>
 </html>
