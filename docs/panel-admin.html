@@ -2,111 +2,181 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Panel Admin</title>
+<title>Panel Administrador</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 :root{
-  --azul:#0b3c6d;
-  --azul2:#0e4f8f;
-  --blanco:#ffffff;
-  --gris:#f2f4f7;
-  --verde:#1fa36b;
-  --rojo:#c0392b;
+  --azul:#0b3c6f;
+  --azul-osc:#082f54;
+  --azul-claro:#0f4c8c;
+  --gris:#f4f6f9;
 }
 
-*{box-sizing:border-box;font-family:system-ui}
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
 
 body{
   margin:0;
-  background:var(--gris);
   display:flex;
+  height:100vh;
+  background:var(--gris);
 }
 
-/* ===== MENU ===== */
-aside{
+/* ===== SIDEBAR ===== */
+.sidebar{
   width:240px;
-  background:linear-gradient(180deg,var(--azul),var(--azul2));
-  color:#fff;
-  padding:20px;
-  transition:.3s;
+  background:linear-gradient(180deg,var(--azul),var(--azul-osc));
+  padding:22px 18px;
+  display:flex;
+  flex-direction:column;
+  box-shadow:4px 0 24px rgba(0,0,0,.25);
 }
 
-aside img{
-  width:120px;
-  display:block;
-  margin:0 auto 20px;
+.logo-box{
+  background:rgba(255,255,255,.2);
+  padding:18px;
+  border-radius:20px;
+  margin-bottom:24px;
 }
 
-aside h2{
-  text-align:center;
-  margin-bottom:30px;
-}
-
-aside button{
+.logo-admin{
   width:100%;
-  background:none;
-  border:none;
+  max-width:160px;
+  display:block;
+  margin:0 auto;
+}
+
+.sidebar h2{
+  text-align:center;
+  font-size:15px;
   color:#fff;
+  margin-bottom:20px;
+  font-weight:600;
+}
+
+nav{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.menu-btn{
+  background:transparent;
+  border:none;
+  color:#e5edff;
+  padding:12px 16px;
+  border-radius:14px;
+  font-size:14px;
   text-align:left;
-  padding:14px;
-  font-size:16px;
-  border-radius:10px;
   cursor:pointer;
-  transition:.3s;
+  transition:.25s ease;
 }
 
-aside button:hover,
-aside button.active{
+.menu-btn:hover{
   background:rgba(255,255,255,.15);
+  transform:translateX(4px);
 }
 
-/* ===== CONTENIDO ===== */
+.menu-btn.active{
+  background:#fff;
+  color:var(--azul);
+  font-weight:600;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+}
+
+.menu-btn.logout{
+  margin-top:auto;
+  color:#fecaca;
+}
+
+/* ===== MAIN ===== */
 main{
   flex:1;
-  padding:30px;
-  overflow:auto;
+  padding:32px;
+  overflow-y:auto;
 }
 
-section{display:none}
-section.active{display:block}
-
-/* ===== SOCIOS ===== */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:20px;
-}
+section{display:none;}
+section.active{display:block;}
 
 .card{
   background:#fff;
-  padding:20px;
-  border-radius:20px;
-  text-align:center;
+  padding:28px;
+  border-radius:28px;
+  box-shadow:0 18px 40px rgba(0,0,0,.12);
+  max-width:1100px;
+}
+
+h3{
+  margin-top:0;
+  color:var(--azul);
+}
+
+/* ===== FORM ===== */
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #d1d5db;
+  margin-top:12px;
+}
+
+button.action{
+  margin-top:16px;
+  padding:12px;
+  border-radius:14px;
+  border:none;
+  background:var(--azul);
+  color:#fff;
   cursor:pointer;
-  transition:.3s;
 }
 
-.card:hover{
-  transform:translateY(-5px);
+/* ===== SOCIOS ===== */
+.socios-container{
+  background:linear-gradient(135deg,var(--azul),var(--azul-claro));
+  padding:32px;
+  border-radius:28px;
 }
 
-.card img{
-  width:160px;
-  margin:10px auto;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:24px;
 }
 
-.estado{
-  font-weight:bold;
-  margin-top:10px;
+.socio{
+  background:#fff;
+  padding:22px;
+  border-radius:22px;
+  text-align:center;
+  box-shadow:0 16px 32px rgba(0,0,0,.15);
+  transition:.25s;
+  cursor:pointer;
 }
 
-.activo{color:var(--verde)}
-.inactivo{color:var(--rojo)}
+.socio:hover{
+  transform:translateY(-4px);
+}
 
-.vence{
-  color:#666;
+.socio strong{
+  display:block;
   font-size:14px;
+  color:var(--azul);
+  margin-bottom:10px;
 }
+
+.socio img{
+  width:130px;
+}
+
+.estado{font-weight:600;}
+.activo{color:#15803d;}
+.inactivo{color:#b91c1c;}
+
+.vence{font-size:12px;color:#6b7280;}
 
 /* ===== MODAL ===== */
 .modal{
@@ -114,53 +184,40 @@ section.active{display:block}
   inset:0;
   background:rgba(0,0,0,.6);
   display:none;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
+  z-index:1000;
 }
 
-.modal .box{
+.modal.active{display:flex;}
+
+.modal-card{
   background:#fff;
-  padding:30px;
-  border-radius:20px;
-  max-width:400px;
-  width:90%;
+  padding:32px;
+  border-radius:28px;
   text-align:center;
+  max-width:380px;
+  width:90%;
   position:relative;
+  animation:zoom .25s ease;
 }
 
-.modal .close{
+@keyframes zoom{
+  from{transform:scale(.9);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+.modal-card img{
+  width:240px;
+}
+
+.close{
   position:absolute;
-  top:15px;
-  right:20px;
+  top:14px;
+  right:18px;
   font-size:22px;
-  cursor:pointer;
-}
-
-/* ===== FORM ===== */
-form{
-  max-width:500px;
-  background:#fff;
-  padding:30px;
-  border-radius:20px;
-}
-
-form input{
-  width:100%;
-  padding:14px;
-  font-size:16px;
-  margin-bottom:15px;
-  border-radius:10px;
-  border:1px solid #ccc;
-}
-
-form button{
-  width:100%;
-  padding:14px;
-  font-size:18px;
+  background:none;
   border:none;
-  border-radius:12px;
-  background:var(--azul);
-  color:#fff;
   cursor:pointer;
 }
 
@@ -168,121 +225,155 @@ form button{
 .stats{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:20px;
+  gap:24px;
 }
 
 .stat{
   background:#fff;
-  padding:20px;
-  border-radius:20px;
+  padding:26px;
+  border-radius:24px;
+  box-shadow:0 14px 32px rgba(0,0,0,.12);
   text-align:center;
 }
-.stat strong{font-size:28px}
-.stat span{color:#666}
+
+.stat strong{
+  display:block;
+  font-size:28px;
+  color:var(--azul);
+}
+
+.stat span{
+  font-size:14px;
+  color:#6b7280;
+}
 </style>
 </head>
 
 <body>
 
-<aside>
-  <img src="logo.png">
+<aside class="sidebar">
+  <div class="logo-box">
+    <img src="logo.png" class="logo-admin">
+  </div>
+
   <h2>Panel Admin</h2>
 
-  <button class="active" onclick="show('socios')">Socios</button>
-  <button onclick="show('alta')">Alta socio</button>
-  <button onclick="show('stats')">Estadísticas</button>
+  <nav>
+    <button class="menu-btn active" onclick="activate(this);show('alta')">Alta socio</button>
+    <button class="menu-btn" onclick="activate(this);show('socios')">Socios</button>
+    <button class="menu-btn" onclick="activate(this);show('stats')">Estadísticas</button>
+    <button class="menu-btn logout" onclick="logout()">Cerrar sesión</button>
+  </nav>
 </aside>
 
 <main>
 
-<!-- ===== SOCIOS ===== -->
-<section id="socios" class="active">
-  <h1>Socios cargados</h1>
-  <div class="grid" id="lista"></div>
+<section id="alta" class="active">
+  <div class="card">
+    <h3>Alta de socio</h3>
+    <input id="nombre" placeholder="Nombre">
+    <input id="apellido" placeholder="Apellido">
+    <input id="dni" placeholder="DNI">
+    <select id="estado">
+      <option>ACTIVO</option>
+      <option>INACTIVO</option>
+    </select>
+    <button class="action" onclick="guardarSocio()">Guardar socio</button>
+  </div>
 </section>
 
-<!-- ===== ALTA ===== -->
-<section id="alta">
-  <h1>Alta de socio</h1>
-  <form onsubmit="altaSocio(event)">
-    <input placeholder="Nombre" id="nombre" required>
-    <input placeholder="Apellido" id="apellido" required>
-    <input placeholder="DNI" id="dni" required>
-    <input type="date" id="vence" required>
-    <button>Guardar socio</button>
-  </form>
+<section id="socios">
+  <div class="socios-container">
+    <div class="grid" id="listaSocios"></div>
+  </div>
 </section>
 
-<!-- ===== STATS ===== -->
 <section id="stats">
-  <h1>Estadísticas</h1>
-  <div class="stats">
-    <div class="stat"><strong id="tTotal">0</strong><span>Total socios</span></div>
-    <div class="stat"><strong id="tActivos">0</strong><span>Activos</span></div>
-    <div class="stat"><strong id="tInactivos">0</strong><span>Inactivos</span></div>
-    <div class="stat"><strong id="tPorcentaje">0%</strong><span>% Activos</span></div>
+  <div class="card">
+    <h3>Estadísticas</h3>
+    <div class="stats">
+      <div class="stat"><strong id="tTotal">0</strong><span>Total socios</span></div>
+      <div class="stat"><strong id="tActivos">0</strong><span>Activos</span></div>
+      <div class="stat"><strong id="tInactivos">0</strong><span>Inactivos</span></div>
+      <div class="stat"><strong id="tPorcentaje">0%</strong><span>% Activos</span></div>
+    </div>
   </div>
 </section>
 
 </main>
 
-<!-- ===== MODAL ===== -->
-<div class="modal" id="modal">
-  <div class="box">
-    <span class="close" onclick="modal.style.display='none'">✕</span>
-    <h2 id="mNombre"></h2>
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="cerrarModal(event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="close" onclick="cerrarModal()">✕</button>
+    <h3 id="mNombre"></h3>
     <img id="mQR">
-    <div id="mEstado"></div>
-    <div id="mVence"></div>
+    <div id="mEstado" class="estado"></div>
+    <div class="vence" id="mVence"></div>
   </div>
 </div>
 
 <script>
-const SOCIOS_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+if(localStorage.getItem("admin")!=="ok"){
+  location.href="admin.html";
+}
 
-const lista = document.getElementById("lista");
-const modal = document.getElementById("modal");
+const SOCIOS_URL="https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+
+function activate(btn){
+  document.querySelectorAll(".menu-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+}
 
 function show(id){
   document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  document.querySelectorAll("aside button").forEach(b=>b.classList.remove("active"));
-  event.target.classList.add("active");
+  if(id==="socios") cargarSocios();
+  if(id==="stats") cargarStats();
 }
 
-fetch(SOCIOS_URL).then(r=>r.json()).then(data=>{
-  lista.innerHTML="";
-  let activos=0;
+function logout(){
+  localStorage.removeItem("admin");
+  location.href="admin.html";
+}
 
-  data.forEach(s=>{
-    if(s.Estado==="ACTIVO") activos++;
-
-    lista.innerHTML+=`
-      <div class="card" onclick='ver(${JSON.stringify(s)})'>
+function cargarSocios(){
+  fetch(SOCIOS_URL).then(r=>r.json()).then(data=>{
+    listaSocios.innerHTML="";
+    data.forEach(s=>{
+      listaSocios.innerHTML+=`
+      <div class="socio" onclick='abrirModal(${JSON.stringify(s)})'>
         <strong>${s.Nombre} ${s.Apellido}</strong>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://socioskehilasfe-coder.github.io/validacion-socios/socio.html?id=${s.ID}">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${s.ID}">
         <div class="estado ${s.Estado==="ACTIVO"?"activo":"inactivo"}">${s.Estado}</div>
-        <div class="vence">Vence: ${s.VENCE}</div>
+        <div class="vence">Vence: ${s.VENCE||"-"}</div>
       </div>`;
+    });
   });
-
-  tTotal.textContent=data.length;
-  tActivos.textContent=activos;
-  tInactivos.textContent=data.length-activos;
-  tPorcentaje.textContent=Math.round((activos*100)/data.length)+"%";
-});
-
-function ver(s){
-  mNombre.textContent=s.Nombre+" "+s.Apellido;
-  mQR.src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://socioskehilasfe-coder.github.io/validacion-socios/socio.html?id="+s.ID;
-  mEstado.innerHTML="<strong>"+s.Estado+"</strong>";
-  mVence.textContent="Vence: "+s.VENCE;
-  modal.style.display="flex";
 }
 
-function altaSocio(e){
-  e.preventDefault();
-  alert("Alta conectada a Apps Script (ya funcionando)");
+function cargarStats(){
+  fetch(SOCIOS_URL).then(r=>r.json()).then(data=>{
+    const total=data.length;
+    const activos=data.filter(s=>s.Estado==="ACTIVO").length;
+    tTotal.textContent=total;
+    tActivos.textContent=activos;
+    tInactivos.textContent=total-activos;
+    tPorcentaje.textContent=total?Math.round(activos*100/total)+"%":"0%";
+  });
+}
+
+function abrirModal(s){
+  mNombre.textContent=s.Nombre+" "+s.Apellido;
+  mQR.src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="+s.ID;
+  mEstado.textContent=s.Estado;
+  mEstado.className="estado "+(s.Estado==="ACTIVO"?"activo":"inactivo");
+  mVence.textContent="Vence: "+(s.VENCE||"-");
+  modal.classList.add("active");
+}
+
+function cerrarModal(){
+  modal.classList.remove("active");
 }
 </script>
 
