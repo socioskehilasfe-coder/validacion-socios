@@ -6,179 +6,215 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-:root {
-  --azul: #0b3c6f;
-  --azul-claro: #0f4c8c;
-  --gris: #f4f6f9;
-  --texto: #1f2937;
+:root{
+  --azul:#0b3c6f;
+  --azul-osc:#082f54;
+  --azul-claro:#0f4c8c;
+  --gris:#f4f6f9;
 }
 
-* {
-  box-sizing: border-box;
-  font-family: "Segoe UI", Arial, sans-serif;
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI",Arial,sans-serif;
 }
 
-body {
-  margin: 0;
-  background: var(--gris);
-  display: flex;
-  height: 100vh;
+body{
+  margin:0;
+  display:flex;
+  height:100vh;
+  background:var(--gris);
 }
 
-/* SIDEBAR */
-aside {
-  width: 230px;
-  background: linear-gradient(180deg, var(--azul), var(--azul-claro));
-  color: white;
-  padding: 24px 16px;
-  display: flex;
-  flex-direction: column;
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:240px;
+  background:linear-gradient(180deg,var(--azul),var(--azul-osc));
+  padding:22px 18px;
+  display:flex;
+  flex-direction:column;
+  box-shadow:4px 0 24px rgba(0,0,0,.25);
 }
 
-.logo-admin {
-  width: 140px;
-  margin: 0 auto 24px;
-  display: block;
+.logo-box{
+  background:rgba(255,255,255,.15);
+  padding:18px;
+  border-radius:20px;
+  margin-bottom:24px;
 }
 
-aside h2 {
-  font-size: 15px;
-  margin-bottom: 28px;
-  font-weight: 600;
-  text-align: center;
+.logo-admin{
+  width:100%;
+  max-width:160px;
+  display:block;
+  margin:0 auto;
 }
 
-aside button {
-  background: transparent;
-  border: none;
-  color: white;
-  padding: 12px 14px;
-  text-align: left;
-  border-radius: 12px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-bottom: 6px;
-  transition: background 0.2s;
+.sidebar h2{
+  text-align:center;
+  font-size:15px;
+  color:#fff;
+  margin-bottom:20px;
+  font-weight:600;
 }
 
-aside button:hover {
-  background: rgba(255,255,255,0.15);
+nav{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
 }
 
-/* MAIN */
-main {
-  flex: 1;
-  padding: 32px;
-  overflow-y: auto;
-  animation: fade 0.3s ease;
+.menu-btn{
+  background:transparent;
+  border:none;
+  color:#e5edff;
+  padding:12px 16px;
+  border-radius:14px;
+  font-size:14px;
+  text-align:left;
+  cursor:pointer;
+  transition:.25s ease;
 }
 
-@keyframes fade {
-  from {opacity:0; transform:translateY(6px);}
-  to {opacity:1; transform:translateY(0);}
+.menu-btn:hover{
+  background:rgba(255,255,255,.14);
+  transform:translateX(4px);
 }
 
-section { display: none; }
-section.active { display: block; }
-
-.card {
-  background: white;
-  padding: 28px;
-  border-radius: 28px;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.1);
-  max-width: 1100px;
+.menu-btn.active{
+  background:#fff;
+  color:var(--azul);
+  font-weight:600;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
 }
 
-h3 {
-  margin-top: 0;
-  color: var(--azul);
+.menu-btn.logout{
+  margin-top:auto;
+  color:#fecaca;
 }
 
-/* FORM */
-input, select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 14px;
-  border: 1px solid #d1d5db;
-  margin-top: 12px;
+.menu-btn.logout:hover{
+  background:rgba(255,0,0,.15);
 }
 
-button.action {
-  margin-top: 16px;
-  padding: 12px;
-  border-radius: 14px;
-  border: none;
-  background: var(--azul);
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
+/* ===== MAIN ===== */
+main{
+  flex:1;
+  padding:32px;
+  overflow-y:auto;
+  animation:fade .3s ease;
 }
 
-/* SOCIOS */
-.socios-container {
-  background: linear-gradient(135deg, var(--azul), var(--azul-claro));
-  padding: 32px;
-  border-radius: 28px;
+@keyframes fade{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
-  gap: 24px;
+section{display:none;}
+section.active{display:block;}
+
+.card{
+  background:#fff;
+  padding:28px;
+  border-radius:28px;
+  box-shadow:0 18px 40px rgba(0,0,0,.12);
+  max-width:1100px;
 }
 
-.socio {
-  background: white;
-  padding: 22px;
-  border-radius: 22px;
-  text-align: center;
-  box-shadow: 0 16px 32px rgba(0,0,0,0.12);
-  transition: transform .25s, box-shadow .25s;
+h3{
+  margin-top:0;
+  color:var(--azul);
 }
 
-.socio:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 22px 44px rgba(0,0,0,0.18);
+/* ===== FORM ===== */
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #d1d5db;
+  margin-top:12px;
 }
 
-.socio strong {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 10px;
-  color: var(--azul);
+button.action{
+  margin-top:16px;
+  padding:12px;
+  border-radius:14px;
+  border:none;
+  background:var(--azul);
+  color:#fff;
+  cursor:pointer;
 }
 
-.socio img {
-  width: 130px;
-  margin: 12px 0;
-  border-radius: 12px;
+/* ===== SOCIOS ===== */
+.socios-container{
+  background:linear-gradient(135deg,var(--azul),var(--azul-claro));
+  padding:32px;
+  border-radius:28px;
 }
 
-.estado {
-  font-weight: 600;
-  font-size: 13px;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:24px;
 }
 
-.activo { color: #15803d; }
-.inactivo { color: #b91c1c; }
+.socio{
+  background:#fff;
+  padding:22px;
+  border-radius:22px;
+  text-align:center;
+  box-shadow:0 16px 32px rgba(0,0,0,.15);
+  transition:.25s;
+}
 
-.vence {
-  font-size: 12px;
-  color: #6b7280;
+.socio:hover{
+  transform:translateY(-4px);
+  box-shadow:0 22px 44px rgba(0,0,0,.2);
+}
+
+.socio strong{
+  display:block;
+  font-size:14px;
+  color:var(--azul);
+  margin-bottom:10px;
+}
+
+.socio img{
+  width:130px;
+  margin:12px 0;
+  border-radius:12px;
+}
+
+.estado{
+  font-size:13px;
+  font-weight:600;
+}
+
+.activo{color:#15803d;}
+.inactivo{color:#b91c1c;}
+
+.vence{
+  font-size:12px;
+  color:#6b7280;
 }
 </style>
 </head>
 
 <body>
 
-<aside>
-  <img src="logo.png" class="logo-admin">
+<aside class="sidebar">
+  <div class="logo-box">
+    <img src="logo.png" class="logo-admin" alt="Comunidad Israelita de Santa Fe">
+  </div>
+
   <h2>Panel Admin</h2>
-  <button onclick="show('alta')">Alta socio</button>
-  <button onclick="show('socios')">Socios</button>
-  <button onclick="show('stats')">Estadísticas</button>
-  <button onclick="show('log')">Ingresos admin</button>
-  <button onclick="logout()">Cerrar sesión</button>
+
+  <nav>
+    <button class="menu-btn active" onclick="activate(this);show('alta')">Alta socio</button>
+    <button class="menu-btn" onclick="activate(this);show('socios')">Socios</button>
+    <button class="menu-btn" onclick="activate(this);show('stats')">Estadísticas</button>
+    <button class="menu-btn" onclick="activate(this);show('log')">Ingresos admin</button>
+    <button class="menu-btn logout" onclick="logout()">Cerrar sesión</button>
+  </nav>
 </aside>
 
 <main>
@@ -217,13 +253,18 @@ button.action {
 </main>
 
 <script>
-if (localStorage.getItem("admin") !== "ok") {
-  location.href = "admin.html";
+if(localStorage.getItem("admin")!=="ok"){
+  location.href="admin.html";
 }
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmxKW80Lcrhe2FLrw5BOYsNEf6f2XHA91JD9nuY7NWyr2rEYsvmjVwp0FFw384umi2/exec";
-const SOCIOS_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
-const LOG_URL = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/LOG_ADMIN";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxmxKW80Lcrhe2FLrw5BOYsNEf6f2XHA91JD9nuY7NWyr2rEYsvmjVwp0FFw384umi2/exec";
+const SOCIOS_URL="https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+const LOG_URL="https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/LOG_ADMIN";
+
+function activate(btn){
+  document.querySelectorAll(".menu-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+}
 
 function show(id){
   document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
@@ -274,10 +315,6 @@ function cargarLog(){
   });
 }
 </script>
-
-</body>
-</html>
-
 
 </body>
 </html>
