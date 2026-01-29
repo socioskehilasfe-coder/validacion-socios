@@ -1,256 +1,245 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Validación de Socio</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Credencial de Socio</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
+<style>
+*{
+  box-sizing:border-box;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
 
-    body {
-      background: linear-gradient(135deg, #0b3c6f, #092a4a);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(180deg,#0b3c6d,#062645);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-    .card {
-      background: #ffffff;
-      width: 100%;
-      max-width: 380px;
-      padding: 26px 22px;
-      border-radius: 24px;
-      box-shadow: 0 18px 36px rgba(0,0,0,0.28);
-      text-align: center;
-    }
+.card{
+  background:white;
+  width:92%;
+  max-width:420px;
+  border-radius:24px;
+  padding:24px;
+  text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
 
-    .logo-card {
-      width: 78px;
-      margin-bottom: 12px;
-    }
+.logo{
+  width:120px;
+  margin:0 auto 10px;
+}
 
-    h1 {
-      font-size: 20px;
-      color: #0b3c6f;
-      margin-bottom: 12px;
-    }
+h2{
+  margin:10px 0 20px;
+  color:#0b3c6d;
+}
 
-    .dato {
-      margin: 6px 0;
-      font-size: 15px;
-      color: #374151;
-    }
+.info{
+  text-align:left;
+  margin-bottom:14px;
+}
 
-    .estado {
-      margin-top: 14px;
-      padding: 10px;
-      border-radius: 14px;
-      font-weight: 600;
-      font-size: 14px;
-    }
+.info b{
+  color:#0b3c6d;
+}
 
-    .activo {
-      background: #dcfce7;
-      color: #166534;
-    }
+.estado{
+  padding:14px;
+  border-radius:14px;
+  font-weight:600;
+  margin:12px 0;
+}
 
-    .inactivo {
-      background: #fee2e2;
-      color: #991b1b;
-    }
+.activo{
+  background:#dcfce7;
+  color:#166534;
+}
 
-    .fecha {
-      margin-top: 8px;
-      font-size: 13px;
-      color: #6b7280;
-    }
+.inactivo{
+  background:#fee2e2;
+  color:#991b1b;
+}
 
-    select {
-      width: 100%;
-      margin-top: 16px;
-      padding: 10px;
-      border-radius: 12px;
-      border: 1px solid #cbd5e1;
-      font-size: 14px;
-    }
+.ingreso{
+  font-size:13px;
+  color:#555;
+  margin-bottom:14px;
+}
 
-    .beneficio {
-      margin-top: 12px;
-      padding: 10px;
-      border-radius: 12px;
-      font-size: 14px;
-      display: none;
-    }
+.lista-comercios{
+  max-height:260px;
+  overflow-y:auto;
+  margin-top:10px;
+}
 
-    .beneficio.ok {
-      background: #e0f2fe;
-      color: #075985;
-      display: block;
-    }
+.comercio{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:12px;
+  background:#f7f9fc;
+  border-radius:14px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:.2s;
+}
 
-    .beneficio.error {
-      background: #fee2e2;
-      color: #991b1b;
-      display: block;
-    }
+.comercio:hover{
+  background:#e9f0ff;
+}
 
-    .btn {
-      display: block;
-      margin-top: 16px;
-      padding: 12px;
-      background: transparent;
-      color: #0b3c6f;
-      text-decoration: none;
-      border-radius: 14px;
-      font-size: 15px;
-      border: 1px solid #0b3c6f;
-    }
+.comercio.activo{
+  outline:2px solid #0b3c6d;
+  background:#e6f0ff;
+}
 
-    .btn.disabled {
-      opacity: 0.4;
-      pointer-events: none;
-    }
-  </style>
+.comercio img{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+  background:white;
+  border-radius:8px;
+}
+
+.comercio strong{
+  font-size:14px;
+}
+
+.comercio small{
+  font-size:12px;
+  color:#555;
+}
+
+button{
+  width:100%;
+  margin-top:14px;
+  padding:15px;
+  font-size:16px;
+  border:none;
+  border-radius:16px;
+  background:#0b3c6d;
+  color:white;
+  cursor:pointer;
+  transition:.2s;
+}
+
+button:disabled{
+  opacity:.5;
+  cursor:default;
+}
+</style>
 </head>
 
 <body>
 
-<div class="card" id="card">
+<div class="card">
+  <img src="logo.png" class="logo">
 
-  <img src="logo.png" class="logo-card" alt="Logo Comunidad">
+  <h2>Credencial de Socio</h2>
 
-  <h1>Credencial de Socio</h1>
-
-  <div class="dato"><strong>Nombre:</strong> <span id="nombre"></span></div>
-  <div class="dato"><strong>Apellido:</strong> <span id="apellido"></span></div>
-  <div class="dato"><strong>DNI:</strong> <span id="dni"></span></div>
+  <div class="info"><b>Nombre:</b> <span id="nombre"></span></div>
+  <div class="info"><b>Apellido:</b> <span id="apellido"></span></div>
+  <div class="info"><b>DNI:</b> <span id="dni"></span></div>
 
   <div id="estado" class="estado"></div>
-  <div id="fechaHora" class="fecha"></div>
 
-  <!-- COMERCIOS -->
-  <select id="comercioSelect">
-    <option value="">Seleccionar comercio</option>
-  </select>
+  <div class="ingreso" id="ingreso"></div>
 
-  <div id="beneficioBox" class="beneficio"></div>
+  <h3>Seleccionar comercio</h3>
+  <div id="listaComercios" class="lista-comercios"></div>
 
-  <!-- VALIDAR -->
-  <a href="#" id="btnValidar" class="btn">Validar beneficio</a>
-
+  <button id="btnValidar" disabled onclick="validar()">Validar beneficio</button>
 </div>
 
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
+/* ========= CONFIGURACIÓN ========= */
+const SOCIOS_URL   = "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+const COMERCIOS_URL= "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/COMERCIOS";
+const REGISTRO_URL = "https://script.google.com/macros/s/TU_SCRIPT/exec";
 
-  const SOCIOS_URL =
-    "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/SOCIOS";
+/* ========= VARIABLES ========= */
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
 
-  const BENEFICIOS_URL =
-    "https://opensheet.elk.sh/132gab3uRyy7_DnkFoyCNbBnoxXDu6gbXiIDr5LTe4nA/BENEFICIOS";
+let socio = null;
+let comercioSeleccionado = null;
 
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFHxqF0GXCgieLEtBslAtxdUvMLUScy_3ptj2SQ0ovQ1rsUD-1Mbh8Kpkz3GgAILIU/exec";
+/* ========= FECHA / HORA ========= */
+const ahora = new Date();
+const fecha = ahora.toLocaleDateString("es-AR");
+const hora  = ahora.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"});
 
-  /* FECHA Y HORA */
-  const ahora = new Date();
-  const fecha = ahora.toLocaleDateString("es-AR");
-  const hora = ahora.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
-
-  fechaHora.textContent = `Ingresó el ${fecha} – ${hora} hs`;
-
-  let socio = null;
-  let beneficios = [];
-
-  /* CARGAR SOCIO */
-  fetch(SOCIOS_URL)
-    .then(res => res.json())
-    .then(data => {
-      socio = data.find(s => s.ID === id);
-      if (!socio) {
-        document.getElementById("card").innerHTML = "<h1>Socio no encontrado</h1>";
-        return;
-      }
-
-      nombre.textContent = socio.Nombre;
-      apellido.textContent = socio.Apellido;
-      dni.textContent = socio.DNI;
-
-      if (socio.Estado === "ACTIVO") {
-        estado.textContent = "SOCIO ACTIVO";
-        estado.classList.add("activo");
-      } else {
-        estado.textContent = "SOCIO INACTIVO";
-        estado.classList.add("inactivo");
-        document.getElementById("btnValidar").classList.add("disabled");
-      }
-    });
-
-  /* CARGAR BENEFICIOS */
-  fetch(BENEFICIOS_URL)
-    .then(res => res.json())
-    .then(data => {
-      beneficios = data;
-      data.forEach(b => {
-        const opt = document.createElement("option");
-        opt.value = b.Comercio;
-        opt.textContent = b.Comercio;
-        comercioSelect.appendChild(opt);
-      });
-    });
-
-  /* MOSTRAR BENEFICIO */
-  comercioSelect.addEventListener("change", () => {
-    const seleccionado = beneficios.find(
-      b => b.Comercio === comercioSelect.value
-    );
-
-    if (seleccionado) {
-      beneficioBox.textContent = "Beneficio: " + seleccionado.Beneficio;
-      beneficioBox.className = "beneficio ok";
-    } else {
-      beneficioBox.textContent = "Este comercio no tiene beneficio";
-      beneficioBox.className = "beneficio error";
-    }
-  });
-
-  /* VALIDAR Y REGISTRAR */
-  document.getElementById("btnValidar").addEventListener("click", (e) => {
-    e.preventDefault();
-
-    if (!socio || socio.Estado !== "ACTIVO") return;
-
-    const comercio = comercioSelect.value;
-    const beneficio = beneficioBox.textContent;
-
-    if (!comercio || !beneficioBox.classList.contains("ok")) {
-      alert("Seleccioná un comercio válido");
+/* ========= CARGAR SOCIO ========= */
+fetch(SOCIOS_URL)
+  .then(r=>r.json())
+  .then(data=>{
+    socio = data.find(s=>s.ID===id);
+    if(!socio){
+      document.body.innerHTML="Socio no encontrado";
       return;
     }
 
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        id: socio.ID,
-        nombre: socio.Nombre,
-        apellido: socio.Apellido,
-        dni: socio.DNI,
-        comercio: comercio,
-        beneficio: beneficio.replace("Beneficio: ", ""),
-        fecha: fecha,
-        hora: hora
-      })
-    });
+    nombre.textContent = socio.Nombre;
+    apellido.textContent = socio.Apellido;
+    dni.textContent = socio.DNI;
 
-    alert("Beneficio validado y registrado correctamente");
+    estado.textContent = socio.Estado==="ACTIVO" ? "SOCIO ACTIVO" : "SOCIO INACTIVO";
+    estado.classList.add(socio.Estado==="ACTIVO"?"activo":"inactivo");
+
+    ingreso.textContent = `Ingresó el ${fecha} – ${hora}`;
   });
+
+/* ========= CARGAR COMERCIOS ========= */
+fetch(COMERCIOS_URL)
+  .then(r=>r.json())
+  .then(data=>{
+    listaComercios.innerHTML="";
+    data.forEach(c=>{
+      const div=document.createElement("div");
+      div.className="comercio";
+      div.innerHTML=`
+        <img src="${c.Logo}">
+        <div>
+          <strong>${c.Comercio}</strong><br>
+          <small>${c.Beneficio}</small>
+        </div>
+      `;
+      div.onclick=()=>{
+        document.querySelectorAll(".comercio").forEach(x=>x.classList.remove("activo"));
+        div.classList.add("activo");
+        comercioSeleccionado=c;
+        btnValidar.disabled=false;
+      };
+      listaComercios.appendChild(div);
+    });
+  });
+
+/* ========= VALIDAR ========= */
+function validar(){
+  if(!comercioSeleccionado) return;
+
+  fetch(REGISTRO_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      Fecha:fecha,
+      Hora:hora,
+      Comercio:comercioSeleccionado.Comercio,
+      Beneficio:comercioSeleccionado.Beneficio,
+      ID:socio.ID,
+      Nombre:socio.Nombre,
+      Apellido:socio.Apellido,
+      DNI:socio.DNI
+    })
+  }).then(()=>{
+    alert("Beneficio registrado correctamente");
+    btnValidar.disabled=true;
+  });
+}
 </script>
 
 </body>
