@@ -6,111 +6,133 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-  body{
-    margin:0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont;
-    background: linear-gradient(180deg,#0b3a67,#0a2f52);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  }
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  background: linear-gradient(180deg,#0b3a67,#0a2f52);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
 
-  .card{
-    background:#fff;
-    width:100%;
-    max-width:420px;
-    border-radius:26px;
-    padding:26px;
-    box-shadow:0 20px 40px rgba(0,0,0,.25);
-    text-align:center;
-  }
+.card{
+  background:#fff;
+  width:100%;
+  max-width:420px;
+  border-radius:28px;
+  padding:26px;
+  box-shadow:0 25px 50px rgba(0,0,0,.25);
+  text-align:center;
+}
 
-  .logo{
-    max-width:140px;
-    margin-bottom:14px;
-  }
+.logo{
+  max-width:140px;
+  margin-bottom:12px;
+}
 
-  h1{
-    font-size:22px;
-    margin:8px 0 18px;
-    color:#0b3a67;
-  }
+h1{
+  font-size:22px;
+  color:#0b3a67;
+  margin-bottom:18px;
+}
 
-  .dato{
-    font-size:15px;
-    margin:6px 0;
-  }
+.dato{
+  font-size:15px;
+  margin:6px 0;
+}
 
-  .estado{
-    margin:18px 0;
-    padding:14px;
-    border-radius:14px;
-    font-weight:700;
-  }
+.estado{
+  margin:18px 0;
+  padding:14px;
+  border-radius:14px;
+  font-weight:700;
+}
 
-  .activo{ background:#dcfce7; color:#166534; }
-  .inactivo{ background:#fee2e2; color:#991b1b; }
+.activo{ background:#dcfce7; color:#166534; }
+.inactivo{ background:#fee2e2; color:#991b1b; }
 
-  .fecha{
-    font-size:13px;
-    color:#555;
-    margin-bottom:18px;
-  }
+.fecha{
+  font-size:13px;
+  color:#555;
+  margin-bottom:18px;
+}
 
-  select{
-    width:100%;
-    padding:14px;
-    border-radius:14px;
-    border:1px solid #ccc;
-    font-size:15px;
-    margin-bottom:14px;
-    max-height:180px;
-  }
+/* CONTENEDOR SCROLL DE COMERCIOS */
+.comercios{
+  max-height:240px;
+  overflow-y:auto;
+  border:1px solid #ddd;
+  border-radius:16px;
+  margin-bottom:14px;
+}
 
-  button{
-    width:100%;
-    padding:16px;
-    border-radius:16px;
-    border:none;
-    background:#0b3a67;
-    color:#fff;
-    font-size:16px;
-    font-weight:700;
-    cursor:pointer;
-    transition:.25s;
-  }
+/* ITEM COMERCIO */
+.comercio{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  cursor:pointer;
+  transition:.2s;
+}
 
-  button:disabled{
-    opacity:.5;
-    cursor:not-allowed;
-  }
+.comercio:hover{
+  background:#f1f5f9;
+}
 
-  button:hover:not(:disabled){
-    background:#092f52;
-  }
+.comercio img{
+  width:36px;
+  height:36px;
+  object-fit:contain;
+}
 
-  #mensajeOK{
-    display:none;
-    margin-top:16px;
-    padding:14px;
-    border-radius:14px;
-    background:#dcfce7;
-    color:#166534;
-    font-weight:600;
-  }
+.comercio span{
+  text-align:left;
+  font-size:15px;
+  font-weight:600;
+}
 
-  .comercio-option{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
+.comercio small{
+  display:block;
+  font-size:13px;
+  color:#555;
+  font-weight:400;
+}
 
-  .comercio-option img{
-    width:32px;
-    height:32px;
-    object-fit:contain;
-  }
+/* BOTON */
+button{
+  width:100%;
+  padding:16px;
+  border-radius:18px;
+  border:none;
+  background:#0b3a67;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.25s;
+}
+
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+button:hover:not(:disabled){
+  background:#092f52;
+}
+
+/* MENSAJE OK */
+#mensajeOK{
+  display:none;
+  margin-top:16px;
+  padding:14px;
+  border-radius:14px;
+  background:#dcfce7;
+  color:#166534;
+  font-weight:600;
+}
 </style>
 </head>
 
@@ -129,9 +151,8 @@
 
   <div class="fecha" id="fechaIngreso"></div>
 
-  <select id="comercioSelect">
-    <option value="">Seleccionar comercio</option>
-  </select>
+  <!-- LISTA SCROLL DE COMERCIOS -->
+  <div class="comercios" id="listaComercios"></div>
 
   <button id="btnValidar" disabled>Validar beneficio</button>
 
@@ -147,7 +168,7 @@ const params = new URLSearchParams(window.location.search);
 const socioID = params.get("id");
 
 const btnValidar = document.getElementById("btnValidar");
-const comercioSelect = document.getElementById("comercioSelect");
+const listaComercios = document.getElementById("listaComercios");
 
 let socio = null;
 let comercioSeleccionado = null;
@@ -177,38 +198,38 @@ fetch(SHEET_SOCIOS)
   }
 });
 
-// Cargar comercios
+// Cargar comercios con logo
 fetch(SHEET_COMERCIOS)
 .then(r=>r.json())
 .then(data=>{
   data.forEach(c=>{
-    const opt=document.createElement("option");
-    opt.value=c.Comercio;
-    opt.textContent=c.Comercio;
-    opt.dataset.beneficio=c.Beneficio;
-    comercioSelect.appendChild(opt);
+    const div=document.createElement("div");
+    div.className="comercio";
+    div.innerHTML=`
+      <img src="${c.Logo}">
+      <span>${c.Comercio}<small>${c.Beneficio}</small></span>
+    `;
+    div.onclick=()=>{
+      comercioSeleccionado=c;
+      document.querySelectorAll(".comercio").forEach(x=>x.style.background="");
+      div.style.background="#e0f2fe";
+      if(socio && socio.Estado==="ACTIVO"){
+        btnValidar.disabled=false;
+      }
+    };
+    listaComercios.appendChild(div);
   });
 });
 
-// Habilitar botón
-comercioSelect.addEventListener("change",()=>{
-  comercioSeleccionado=comercioSelect.value;
-  if(comercioSeleccionado && socio && socio.Estado==="ACTIVO"){
-    btnValidar.disabled=false;
-  }else{
-    btnValidar.disabled=true;
-  }
-});
-
 // Validar beneficio
-btnValidar.addEventListener("click",()=>{
+btnValidar.onclick=()=>{
   fetch(ENDPOINT_REGISTRO,{
     method:"POST",
     body:JSON.stringify({
       Fecha:ahora.toLocaleDateString(),
       Hora:ahora.toLocaleTimeString(),
-      Comercio:comercioSeleccionado,
-      Beneficio:comercioSelect.selectedOptions[0].dataset.beneficio,
+      Comercio:comercioSeleccionado.Comercio,
+      Beneficio:comercioSeleccionado.Beneficio,
       ID:socio.ID,
       Nombre:socio.Nombre,
       Apellido:socio.Apellido,
@@ -218,8 +239,9 @@ btnValidar.addEventListener("click",()=>{
 
   document.getElementById("mensajeOK").style.display="block";
   btnValidar.disabled=true;
-});
+};
 </script>
 
 </body>
 </html>
+
