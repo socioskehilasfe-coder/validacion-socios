@@ -58,7 +58,6 @@ h1{
   margin-bottom:18px;
 }
 
-/* CONTENEDOR SCROLL DE COMERCIOS */
 .comercios{
   max-height:240px;
   overflow-y:auto;
@@ -67,7 +66,6 @@ h1{
   margin-bottom:14px;
 }
 
-/* ITEM COMERCIO */
 .comercio{
   display:flex;
   align-items:center;
@@ -100,7 +98,6 @@ h1{
   font-weight:400;
 }
 
-/* BOTON */
 button{
   width:100%;
   padding:16px;
@@ -123,7 +120,6 @@ button:hover:not(:disabled){
   background:#092f52;
 }
 
-/* MENSAJE OK */
 #mensajeOK{
   display:none;
   margin-top:16px;
@@ -151,7 +147,6 @@ button:hover:not(:disabled){
 
   <div class="fecha" id="fechaIngreso"></div>
 
-  <!-- LISTA SCROLL DE COMERCIOS -->
   <div class="comercios" id="listaComercios"></div>
 
   <button id="btnValidar" disabled>Validar beneficio</button>
@@ -173,7 +168,6 @@ const listaComercios = document.getElementById("listaComercios");
 let socio = null;
 let comercioSeleccionado = null;
 
-// Fecha / hora
 const ahora = new Date();
 document.getElementById("fechaIngreso").innerText =
   "Ingresó el " + ahora.toLocaleDateString() + " – " + ahora.toLocaleTimeString();
@@ -198,7 +192,7 @@ fetch(SHEET_SOCIOS)
   }
 });
 
-// Cargar comercios con logo
+// Cargar comercios
 fetch(SHEET_COMERCIOS)
 .then(r=>r.json())
 .then(data=>{
@@ -221,33 +215,37 @@ fetch(SHEET_COMERCIOS)
   });
 });
 
-// Validar beneficio
-btnValidar.onclick=()=>{
- fetch("https://script.google.com/macros/s/AKfycby70FDFlaMIF28RzCbNaMZ5-VnmJLMRWKBZy1m_JLuAwGRa_bEY7ykgjVQPynHHOlig/exec", {
-  method: "POST",
-  mode: "no-cors",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(datos)
-});
-    Fecha: ahora.toLocaleDateString(),
-    Hora: ahora.toLocaleTimeString(),
+// VALIDAR BENEFICIO (ARREGLADO)
+btnValidar.onclick = () => {
+
+  if(!comercioSeleccionado) return;
+
+  const ahoraValidacion = new Date();
+
+  const datos = {
+    Fecha: ahoraValidacion.toLocaleDateString(),
+    Hora: ahoraValidacion.toLocaleTimeString(),
     Comercio: comercioSeleccionado.Comercio,
     Beneficio: comercioSeleccionado.Beneficio,
     ID: socio.ID,
     Nombre: socio.Nombre,
     Apellido: socio.Apellido,
     DNI: socio.DNI
-  })
-});
+  };
 
+  fetch(ENDPOINT_REGISTRO, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(datos)
+  });
 
-  document.getElementById("mensajeOK").style.display="block";
-  btnValidar.disabled=true;
+  document.getElementById("mensajeOK").style.display = "block";
+  btnValidar.disabled = true;
 };
 </script>
 
 </body>
 </html>
-
