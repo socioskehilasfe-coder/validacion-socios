@@ -223,19 +223,23 @@ fetch(SHEET_COMERCIOS)
 
 // Validar beneficio
 btnValidar.onclick=()=>{
-  fetch(ENDPOINT_REGISTRO,{
-    method:"POST",
-    body:JSON.stringify({
-      Fecha:ahora.toLocaleDateString(),
-      Hora:ahora.toLocaleTimeString(),
-      Comercio:comercioSeleccionado.Comercio,
-      Beneficio:comercioSeleccionado.Beneficio,
-      ID:socio.ID,
-      Nombre:socio.Nombre,
-      Apellido:socio.Apellido,
-      DNI:socio.DNI
-    })
-  });
+ fetch(ENDPOINT_REGISTRO,{
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json"
+  },
+  body:JSON.stringify({
+    Fecha: ahora.toLocaleDateString(),
+    Hora: ahora.toLocaleTimeString(),
+    Comercio: comercioSeleccionado.Comercio,
+    Beneficio: comercioSeleccionado.Beneficio,
+    ID: socio.ID,
+    Nombre: socio.Nombre,
+    Apellido: socio.Apellido,
+    DNI: socio.DNI
+  })
+});
+
 
   document.getElementById("mensajeOK").style.display="block";
   btnValidar.disabled=true;
